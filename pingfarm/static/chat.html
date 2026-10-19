@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PingFarm</title>
+<style>
+  :root { --bg:#f6f4ee; --card:#fff; --ink:#1d2a1d; --muted:#5f6b5f; --accent:#2f6f3e; --line:#d9d6c8; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141a14; --card:#1d261d; --ink:#e9efe6; --muted:#9bab9b; --accent:#6fbf7f; --line:#334033; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:16px; }
+  h1 { font-size:1.4rem; margin:8px 0 2px; }
+  p.sub { margin:0 0 12px; color:var(--muted); }
+  #log { display:flex; flex-direction:column; gap:10px; min-height:200px; }
+  .msg { padding:10px 12px; border-radius:12px; background:var(--card); border:1px solid var(--line); white-space:pre-wrap; }
+  .me { align-self:flex-end; background:var(--accent); color:#fff; border-color:var(--accent); }
+  .src { font-size:.85rem; color:var(--muted); margin-top:6px; }
+  details { font-size:.8rem; color:var(--muted); margin-top:6px; }
+  form { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  input[type=text] { flex:1; min-width:200px; padding:12px; font-size:1rem; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink); }
+  button, label.btn { padding:12px 14px; font-size:1rem; border-radius:10px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; }
+  button.ghost, label.btn { background:transparent; color:var(--accent); }
+  input[type=file] { display:none; }
+  .note { font-size:.8rem; color:var(--muted); margin-top:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PingFarm</h1>
+  <p class="sub">Ask about tomato or potato problems in English, Hindi or Telugu. Send a leaf photo too.</p>
+  <div id="log" aria-live="polite"></div>
+  <form id="f">
+    <input id="q" type="text" placeholder="Type your question..." autocomplete="off">
+    <button type="submit">Ask</button>
+    <label class="btn" for="photo">Photo</label><input id="photo" type="file" accept="image/*">
+    <button type="button" class="ghost" id="loc">Share location</button>
+  </form>
+  <p class="note">Advice comes from ICAR and TNAU documents and may be incomplete. For doses, always read the product label and ask your local agriculture officer.</p>
+</main>
+<script>
+const log = document.getElementById('log');
+const uid = 'web-' + (localStorage.getItem('pf_uid') || (localStorage.pf_uid = Math.random().toString(36).slice(2)));
+
+function add(text, who, extra) {
+  const d = document.createElement('div'); d.className = 'msg ' + who; d.textContent = text;
+  if (extra && extra.sources && extra.sources.length) {
+    const s = document.createElement('div'); s.className = 'src';
+    s.textContent = 'Sources: ' + extra.sources.map(x => x.title).join('; '); d.appendChild(s);
+  }
+  if (extra && extra.trace && extra.trace.length) {
+    const t = document.createElement('details'); const sm = document.createElement('summary'); sm.textContent = 'How I decided';
+    t.appendChild(sm); t.appendChild(document.createTextNode(extra.trace.join('\n'))); d.appendChild(t);
+  }
+  log.appendChild(d); d.scrollIntoView({behavior:'smooth', block:'end'});
+}
+async function ask(body) {
+  const r = await fetch('/ask', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({user_id: uid, ...body})});
+  const j = await r.json(); add(j.text, 'bot', j);
+}
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault(); const q = document.getElementById('q'); if (!q.value.trim()) return;
+  add(q.value, 'me'); ask({text: q.value}); q.value = '';
+});
+document.getElementById('photo').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return; add('[photo] ' + file.name, 'me');
+  const fd = new FormData(); fd.append('user_id', uid); fd.append('photo', file);
+  const r = await fetch('/ask/photo', {method:'POST', body: fd}); const j = await r.json(); add(j.text, 'bot', j);
+});
+document.getElementById('loc').addEventListener('click', () => {
+  navigator.geolocation.getCurrentPosition(p => { add('[location shared]', 'me'); ask({lat: p.coords.latitude, lon: p.coords.longitude}); },
+    () => add('Could not get your location.', 'bot'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "abstain_threshold": 0.7945,
+  "auc_in_vs_out_of_scope": 0.844,
+  "in_scope_answered": 0.897,
+  "out_of_scope_refused": 0.533,
+  "n_in_scope": 39,
+  "n_out_of_scope": 30,
+  "in_scope_sim_mean": 0.838,
+  "out_of_scope_sim_mean": 0.778,
+  "per_language_refused": {
+    "en": 0.4,
+    "hi": 0.6,
+    "te": 0.6
+  }
+}

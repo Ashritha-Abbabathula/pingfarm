@@ -9,3 +9,7 @@ secrets.yaml
 data/raw/
 data/index/
 
+
+models/
+data/*.sqlite
+results/retrieval_quick.csv

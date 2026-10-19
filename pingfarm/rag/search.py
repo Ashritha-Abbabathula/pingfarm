@@ -61,6 +61,12 @@ class Retriever:
         _, ids = self.index.search(q, min(n, len(self.chunks)))
         return [int(i) for i in ids[0] if i >= 0]
 
+    def top_similarity(self, query: str) -> float:
+        """Cosine similarity of the single closest chunk. Used to decide "I don't know"."""
+        q = self.embedder.embed_queries([query])
+        scores, _ = self.index.search(q, 1)
+        return float(scores[0][0])
+
     def _bm25(self, query: str, n: int) -> list[int]:
         scores = self.bm25.get_scores(_tokens(query))
         return [int(i) for i in np.argsort(scores)[::-1][:n]]

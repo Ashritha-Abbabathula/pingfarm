@@ -1,0 +1,195 @@
+{
+  "classes": [
+    "potato__early_blight",
+    "potato__late_blight",
+    "tomato__bacterial_spot",
+    "tomato__early_blight",
+    "tomato__healthy",
+    "tomato__late_blight",
+    "tomato__leaf_mold",
+    "tomato__mosaic_virus",
+    "tomato__septoria_leaf_spot",
+    "tomato__yellow_leaf_curl"
+  ],
+  "A_lab_only": {
+    "on_lab_test": {
+      "n": 1425,
+      "accuracy": 0.9789,
+      "macro_f1": 0.98
+    },
+    "on_field_test": {
+      "n": 85,
+      "accuracy": 0.2471,
+      "macro_f1": 0.1678
+    }
+  },
+  "B_lab_plus_field": {
+    "on_lab_test": {
+      "n": 1425,
+      "accuracy": 0.9811,
+      "macro_f1": 0.9821
+    },
+    "on_field_test": {
+      "n": 85,
+      "accuracy": 0.5647,
+      "macro_f1": 0.5465
+    }
+  },
+  "tau": 0.85,
+  "selective_on_field_test": [
+    {
+      "tau": 0.0,
+      "coverage": 1.0,
+      "accuracy_on_answered": 0.565
+    },
+    {
+      "tau": 0.5,
+      "coverage": 0.612,
+      "accuracy_on_answered": 0.712
+    },
+    {
+      "tau": 0.6,
+      "coverage": 0.447,
+      "accuracy_on_answered": 0.816
+    },
+    {
+      "tau": 0.7,
+      "coverage": 0.306,
+      "accuracy_on_answered": 0.808
+    },
+    {
+      "tau": 0.8,
+      "coverage": 0.176,
+      "accuracy_on_answered": 0.8
+    },
+    {
+      "tau": 0.9,
+      "coverage": 0.094,
+      "accuracy_on_answered": 0.75
+    }
+  ],
+  "confusion_matrix_field_test": [
+    [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      5,
+      2,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      4,
+      0,
+      0,
+      1,
+      1,
+      0,
+      3,
+      0
+    ],
+    [
+      2,
+      0,
+      2,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      2,
+      2,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      2,
+      1,
+      0,
+      7,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      2,
+      4,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      10,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      3
+    ]
+  ],
+  "tau_target_reached": true,
+  "tau_target": 0.8
+}
