@@ -76,6 +76,7 @@ python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quic
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)
 python scripts/calibrate_abstain.py         # measures the text "I don't know" cut-off
+python scripts/check_keys.py              # checks your optional keys (.env), never prints them
 uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 ```
 

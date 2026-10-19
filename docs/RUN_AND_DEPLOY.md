@@ -1,37 +1,97 @@
-# Run and connect PingFarm
+# Run PingFarm and connect your keys
 
-## 1. Run the web app locally (no keys needed)
+PingFarm works with **no keys** (replies quote the sources, WhatsApp is a dry run). Each key below switches on
+one more capability. You can add them one at a time, in this order.
+
+**Golden rules:** keys go only in the file `.env` (git-ignored). Never paste a key into chat, a notebook,
+a commit, or a screenshot. If one leaks, delete it in the provider's console and make a new one.
+
+## 0. Set up `.env`
 
 ```bash
-python -m pingfarm.evalkit.run_eval --quick   # optional: reproduce the retrieval table
-uvicorn pingfarm.app:app --reload
+copy .env.example .env      # Windows (use cp on Mac/Linux)
 ```
 
-Open http://127.0.0.1:8000 for the chat page. Try a question in English, Hindi or Telugu, share a
-location (browser prompt), and upload a leaf photo once a model exists in `models/`.
-Without API keys the reply quotes the sources directly (the "extractive" answerer) and WhatsApp runs
-in dry-run mode (messages are recorded, not sent).
+Open `.env` in a text editor and fill values in as you get them (no quotes, no spaces around `=`).
+After each step, check it:
 
-## 2. Turn on the language model
+```bash
+python scripts/check_keys.py
+```
 
-Set `ANTHROPIC_API_KEY` (see `.env.example`). Replies are then written in the farmer's language using
-only the retrieved passages, and still pass through the dose guard.
+It prints OK / SKIPPED / FAILED for each key and never prints the key itself.
 
-## 3. Connect WhatsApp (Meta Cloud API)
+## 1. data.gov.in key (free, about 5 minutes): market prices
 
-1. Create a Meta developer app, add the WhatsApp product, and note the test phone-number id and token.
-2. Choose any string as `WHATSAPP_VERIFY_TOKEN`; set `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `WHATSAPP_APP_SECRET`.
-3. Make your laptop reachable from the internet with a tunnel (for example `cloudflared tunnel --url http://localhost:8000`
-   or `ngrok http 8000`), or deploy to a free host such as Render.
-4. In the Meta console set the webhook callback URL to `https://<your-host>/webhook` and the verify token
-   to your string, then subscribe to the `messages` field.
-5. Send a message from a number added as a test recipient.
+1. Go to https://data.gov.in and click **Register** (or Login). Confirm your email.
+2. After login open **My Account** (your name, top right). Find **API Key** / **Get API Key** and generate it.
+3. Put it in `.env` as `DATA_GOV_API_KEY=...`.
+4. Run `python scripts/check_keys.py`. You want `data.gov.in OK` and an example price line.
 
-Gotchas (also in `pingfarm/whatsapp.py`): Meta retries slow webhooks (handled by de-duplication);
-photos and voice notes arrive as ids that must be downloaded with your token; a public number needs a
-verified business account, but the test number is enough for a demo and a small pilot.
+If it says *"no Tomato rows came back"*: the key is fine but the price tool's field names or filters need adjusting
+to the live data. The tool was built from the published schema and tested only on sample data, so this is the first
+place a small fix may be needed. Send me the message and I will fix it.
 
-## 4. Prices
+## 2. Anthropic key (paid, a few dollars is plenty): Claude writes the replies
 
-Get a free key from data.gov.in and set `DATA_GOV_API_KEY`. The price tool has been tested against
-recorded sample data only, not the live service.
+1. Go to https://console.anthropic.com and sign in or create an account.
+2. Add a small amount of credit under **Billing** (for example $5). Each reply costs a fraction of a cent with the default small model.
+3. Open **API Keys**, **Create Key**, name it `pingfarm`, copy it once (it is not shown again).
+4. Put it in `.env` as `ANTHROPIC_API_KEY=...`. Leave `PINGFARM_MODEL` as it is.
+5. Run `python scripts/check_keys.py`. You want `anthropic OK`.
+6. Start the app (section 4) and check `/health`: `"llm"` should now say `ClaudeAnswerer`.
+
+Cost control: set a monthly spend limit in the console. Replies are short and the long rules are cached.
+
+## 3. Meta WhatsApp Cloud API (free test number): real WhatsApp messages
+
+You need a normal Facebook account. The **test number** is free and enough for a demo and a small pilot.
+
+**A. Create the app**
+1. Go to https://developers.facebook.com, log in, accept the developer terms.
+2. **My Apps**, **Create App**. Choose the **Business** type (menu wording changes over time; pick the option that adds business messaging). Name it `PingFarm`.
+3. On the app dashboard find **WhatsApp** and click **Set up**. Meta creates a test business account and a **test phone number** for you.
+
+**B. Get the values** (WhatsApp, **API Setup** page)
+1. **Phone number ID**, shown under the test number. Put in `.env` as `WHATSAPP_PHONE_ID=...`.
+2. **Temporary access token**. It expires in about 24 hours, which is fine for a first test. Put in `.env` as `WHATSAPP_TOKEN=...`.
+3. Under **To**, add your own phone as a recipient and enter the code WhatsApp sends you. The test number can message only recipients you add here (a handful).
+4. **App secret**: **App settings**, **Basic**, **Show** next to App Secret. Put in `.env` as `WHATSAPP_APP_SECRET=...`.
+5. Choose any random string for `WHATSAPP_VERIFY_TOKEN` (for example 20 random letters). You will type the same string into Meta in step D.
+
+Run `python scripts/check_keys.py`: `whatsapp OK` shows the test number if the token and phone id are right.
+
+**C. Make your laptop reachable from the internet** (Meta must be able to call your webhook)
+- Start the app: `uvicorn pingfarm.app:app --port 8000`
+- In a second terminal use a tunnel, for example Cloudflare's: `cloudflared tunnel --url http://localhost:8000`
+  (or `ngrok http 8000`). It prints a public `https://...` address. Keep both running.
+
+**D. Register the webhook** (WhatsApp, **Configuration**)
+1. **Callback URL**: `https://<your-tunnel-address>/webhook`
+2. **Verify token**: the exact string you chose as `WHATSAPP_VERIFY_TOKEN`.
+3. Click **Verify and save**. Meta calls your server; it succeeds only if the app is running and the token matches.
+4. Under **Webhook fields** subscribe to **messages**.
+
+**E. Try it**
+From the phone you added as a recipient, send a message to the test number: *"How do I control leaf curl virus in tomato?"*
+You should get a reply with the source named. Send a leaf photo and a location pin too.
+
+**Later (not needed for a demo)**
+- The 24-hour token: for a pilot lasting days, create a **System User** in Meta Business Settings and generate a permanent token for your app.
+- A public number anyone can message needs Meta **business verification**. Pricing and free allowances change, so read Meta's current WhatsApp pricing page before a real pilot.
+- Voice notes get a polite "coming soon": speech-to-text is not built.
+
+## 4. Run and check the app
+
+```bash
+uvicorn pingfarm.app:app --reload        # chat page at http://127.0.0.1:8000
+```
+
+`http://127.0.0.1:8000/health` shows which parts are switched on (`llm`, `photo_diagnosis`, `whatsapp_dry_run`).
+`whatsapp_dry_run: false` means real sending is on.
+
+## Troubleshooting
+- **Webhook verification fails:** the app is not running, the tunnel address changed (free tunnels change on restart), or the verify token differs by one character.
+- **No reply on WhatsApp:** check you added your phone as a recipient, the token has not expired (24 h), and the terminal running `uvicorn` for errors.
+- **Reply arrives twice:** should not happen (message ids are de-duplicated); tell me if it does.
+- **A model download fails with a certificate error:** wait and retry; the network is intermittently interfering. Do not turn certificate checking off.

@@ -28,6 +28,11 @@ from .whatsapp import WhatsAppClient, parse_incoming, verify_signature
 
 ROOT = Path(__file__).resolve().parents[1]
 
+# Secrets live in a local .env file (git-ignored), never in the code. Real environment variables win.
+from dotenv import load_dotenv  # noqa: E402
+
+load_dotenv(ROOT / ".env", override=False)
+
 
 def build_agent(state: State | None = None, answerer=None, classifier=None) -> Agent:
     """Wire everything together. Config from our experiments: fixed-200 chunks + header, dense search + reranker
