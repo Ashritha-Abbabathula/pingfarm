@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.env
+secrets.yaml
+
+# Downloaded third-party documents: we publish the source list, not the files
+data/raw/
+data/index/
+

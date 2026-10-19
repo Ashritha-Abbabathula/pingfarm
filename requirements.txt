@@ -1,0 +1,10 @@
+numpy>=1.26
+faiss-cpu>=1.8
+sentence-transformers>=3.0
+pypdf>=4.0
+rank-bm25>=0.2.2
+pytest>=8.0
+jupyterlab>=4.0
+ipykernel>=6.29
+matplotlib>=3.8
+pandas>=2.2
