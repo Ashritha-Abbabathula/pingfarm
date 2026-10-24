@@ -10,6 +10,9 @@ data/raw/
 data/index/
 
 
-models/
+models/*
 data/*.sqlite
 results/retrieval_quick.csv
+data/kcc/
+!models/topic_gate.json
+!models/intents.json

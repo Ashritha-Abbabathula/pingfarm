@@ -18,6 +18,7 @@ class DayForecast:
     rain_chance: int
     t_min: float
     t_max: float
+    rh: float | None = None   # mean relative humidity, percent
 
 
 @dataclass
@@ -26,11 +27,11 @@ class SprayAdvice:
     reason: str
 
 
-def fetch_forecast(lat: float, lon: float, days: int = 3, client: httpx.Client | None = None) -> list[DayForecast]:
+def fetch_forecast(lat: float, lon: float, days: int = 7, client: httpx.Client | None = None) -> list[DayForecast]:
     params = {
         "latitude": lat,
         "longitude": lon,
-        "daily": "precipitation_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min",
+        "daily": "precipitation_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean",
         "forecast_days": days,
         "timezone": "auto",
     }
@@ -48,6 +49,7 @@ def fetch_forecast(lat: float, lon: float, days: int = 3, client: httpx.Client |
             rain_chance=int(data["precipitation_probability_max"][i] or 0),
             t_min=float(data["temperature_2m_min"][i]),
             t_max=float(data["temperature_2m_max"][i]),
+            rh=(float(data["relative_humidity_2m_mean"][i]) if data.get("relative_humidity_2m_mean") and data["relative_humidity_2m_mean"][i] is not None else None),
         )
         for i in range(len(data["time"]))
     ]

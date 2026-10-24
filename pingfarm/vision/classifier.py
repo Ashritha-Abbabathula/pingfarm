@@ -37,21 +37,22 @@ def build_model(num_classes: int, pretrained: bool = True) -> nn.Module:
 
 
 class LeafClassifier:
-    def __init__(self, model: nn.Module, classes: list[str], tau: float = 0.0):
-        self.model, self.classes, self.tau = model.eval(), classes, tau
+    def __init__(self, model: nn.Module, classes: list[str], tau: float = 0.0, temperature: float = 1.0):
+        self.model, self.classes, self.tau, self.temperature = model.eval(), classes, tau, temperature
 
     @classmethod
     def load(cls, path: str | Path) -> "LeafClassifier":
         ckpt = torch.load(path, map_location="cpu", weights_only=True)
         model = build_model(len(ckpt["classes"]), pretrained=False)
         model.load_state_dict(ckpt["state_dict"])
-        return cls(model, ckpt["classes"], ckpt.get("tau", 0.0))
+        return cls(model, ckpt["classes"], ckpt.get("tau", 0.0), ckpt.get("temperature", 1.0))
 
     @torch.no_grad()
     def probabilities(self, image_bytes: bytes) -> torch.Tensor:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         logits = self.model(EVAL_TF(img).unsqueeze(0))
-        return torch.softmax(logits, dim=1)[0]
+        # temperature scaling: dividing the scores by T > 1 softens over-confident probabilities
+        return torch.softmax(logits / self.temperature, dim=1)[0]
 
     def predict(self, image_bytes: bytes) -> tuple[str | None, float]:
         probs = self.probabilities(image_bytes)

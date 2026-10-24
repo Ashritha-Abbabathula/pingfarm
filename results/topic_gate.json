@@ -1,0 +1,24 @@
+{
+  "n_train": 1446,
+  "english_cv_auc": 0.925,
+  "threshold": 0.4232,
+  "threshold_indic": 0.4761,
+  "refused_per_negative_group": {
+    "kcc_tomato_potato_uncovered": 0.622,
+    "kcc_other_crop": 0.912,
+    "oos": 0.7,
+    "translated_neg": 0.588
+  },
+  "held_out_hindi_telugu": {
+    "auc_hi_te": 0.825,
+    "threshold_indic": 0.4761,
+    "answerable_kept": 0.692,
+    "off_topic_refused": 0.85,
+    "off_topic_refused_hi": 0.8,
+    "off_topic_refused_te": 0.9
+  },
+  "old_similarity_gate": {
+    "auc_hi_te": 0.84,
+    "off_topic_refused": 0.5
+  }
+}

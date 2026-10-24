@@ -1,0 +1,28 @@
+{
+  "romanised (24)": {
+    "centroid": 0.833,
+    "trained": 0.792
+  },
+  "outlook (10)": {
+    "centroid": 0.8,
+    "trained": 0.8
+  },
+  "off_topic OOS (30)": {
+    "centroid": 0.233,
+    "trained": 0.9
+  },
+  "starter advice en/hi/te (39)": {
+    "centroid": 0.923,
+    "trained": 0.872
+  },
+  "KCC held-out (n=202)": {
+    "centroid": 0.634,
+    "trained": 0.901
+  },
+  "KCC held-out per class (trained)": {
+    "advice": 0.886,
+    "outlook": 0.818,
+    "other": 0.943,
+    "price": 1.0
+  }
+}

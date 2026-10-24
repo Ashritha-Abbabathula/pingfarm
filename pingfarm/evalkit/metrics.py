@@ -21,6 +21,8 @@ class Question:
 def is_relevant(chunk_doc_id: str, chunk_text: str, q: Question) -> bool:
     if chunk_doc_id not in q.doc_ids:
         return False
+    if not q.evidence:  # document-level label (used for the real KCC questions)
+        return True
     low = " ".join(chunk_text.lower().split())  # ignore line breaks / double spaces
     return any(" ".join(e.lower().split()) in low for e in q.evidence)
 

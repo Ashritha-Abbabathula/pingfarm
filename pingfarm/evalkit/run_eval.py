@@ -45,21 +45,31 @@ def summarize(per_question: pd.DataFrame) -> dict:
     }
 
 
+def load_sets() -> dict[str, list[Question]]:
+    """starter: 39 hand-written questions (en/hi/te), evidence-phrase labels.
+    real: farmer questions from the Kisan Call Centre that our knowledge base can answer, document-level labels."""
+    sets = {"starter": load_questions()}
+    real_path = ROOT / "data" / "eval" / "real_questions.jsonl"
+    if real_path.exists():
+        rows = [json.loads(l) for l in real_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        sets["real"] = [Question(r["id"], r["lang"], r["text"], r["doc_ids"], r["evidence"]) for r in rows if r["answerable"]]
+    return sets
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true", help="skip reranker runs")
     ap.add_argument("--model", default=DEFAULT_MODEL)
+    ap.add_argument("--out", default="retrieval_experiments.csv")
     args = ap.parse_args()
 
     docs = load_documents()
-    questions = load_questions()
+    sets = load_sets()
     embedder = Embedder(args.model)
-    print(f"{len(docs)} documents, {len(questions)} questions, embedder={args.model}\n")
+    print(f"{len(docs)} documents; " + ", ".join(f"{k}: {len(v)} questions" for k, v in sets.items()) + f"; embedder={args.model}\n")
 
     chunkings = {
-        "fixed-100": ("fixed", {"size": 100, "overlap": 20}),
         "fixed-200": ("fixed", {"size": 200, "overlap": 40}),
-        "section-200": ("section", {"max_words": 200}),
         "fixed-200+header": ("fixed", {"size": 200, "overlap": 40, "header": True}),
         "section-200+header": ("section", {"max_words": 200, "header": True}),
     }
@@ -69,19 +79,23 @@ def main() -> None:
         retriever = Retriever(chunks, embedder)
         for mode in ("bm25", "dense", "hybrid"):
             for rerank in ([False] if args.quick else [False, True]):
-                per_q = evaluate(retriever, questions, mode, rerank)
-                row = {"chunking": cname, "n_chunks": len(chunks), "retriever": mode,
-                       "rerank": rerank, **summarize(per_q)}
-                for lang in ("en", "hi", "te"):
-                    sub = per_q[per_q["lang"] == lang]
-                    row[f"hit@3_{lang}"] = summarize(sub)["hit@3"]
-                rows.append(row)
-                print(f"done {cname:12s} {mode:7s} rerank={rerank}")
+                for set_name, questions in sets.items():
+                    per_q = evaluate(retriever, questions, mode, rerank)
+                    row = {"question_set": set_name, "n_questions": len(questions), "chunking": cname,
+                           "n_chunks": len(chunks), "retriever": mode, "rerank": rerank, **summarize(per_q)}
+                    for lang in ("en", "hi", "te"):
+                        sub = per_q[per_q["lang"] == lang]
+                        row[f"hit@3_{lang}"] = summarize(sub)["hit@3"] if len(sub) else None
+                    rows.append(row)
+                # save after EVERY configuration: a long run that is interrupted must not lose its finished work
+                (ROOT / "results").mkdir(exist_ok=True)
+                pd.DataFrame(rows).round(3).to_csv(ROOT / "results" / args.out, index=False)
+                print(f"done {cname:20s} {mode:7s} rerank={rerank}", flush=True)
 
     df = pd.DataFrame(rows).round(3)
     (ROOT / "results").mkdir(exist_ok=True)
-    df.to_csv(ROOT / "results" / "retrieval_experiments.csv", index=False)
-    pd.set_option("display.width", 200)
+    df.to_csv(ROOT / "results" / args.out, index=False)
+    pd.set_option("display.width", 220)
     print("\n", df.to_string(index=False))
 
 

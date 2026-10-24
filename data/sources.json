@@ -208,5 +208,225 @@
     "crops": [
       "potato"
     ]
+  },
+  {
+    "id": "vik_hi_tomato_cultivation",
+    "title": "Vikaspedia (Hindi): scientific cultivation of tomato",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://agriculture.vikaspedia.in/viewcontent/agriculture/crop-production/92c93f93993e930-93093e91c94d92f-92e947902-91594393793f-92a94d93092393e932940/92c93f93993e930-92e947902-90992694d92f93e92893f915-92b93893294b902-915940-916947924940/93892c94d91c940/91f92e93e91f930-915940-93594891c94d91e93e92893f915-916947924940?lgn=hi",
+    "type": "vikaspedia",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "hi"
+  },
+  {
+    "id": "vik_hi_potato_blight_mgmt",
+    "title": "Vikaspedia (Hindi): management of potato blight diseases",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://hi.vikaspedia.in/viewcontent/agriculture/91594393793f-906917924/90591c94893593f915-90692693e928/%E0%A4%86%E0%A4%B2%E0%A5%82-%E0%A4%95%E0%A5%87-%E0%A4%9D%E0%A5%81%E0%A4%B2%E0%A4%B8%E0%A4%BE-%E0%A4%B0%E0%A5%8B%E0%A4%97%E0%A5%8B%E0%A4%82-%E0%A4%95%E0%A4%BE-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%AC%E0%A4%82%E0%A4%A7%E0%A4%A8",
+    "type": "vikaspedia",
+    "crops": [
+      "potato"
+    ],
+    "lang": "hi"
+  },
+  {
+    "id": "vik_hi_potato_cultivation",
+    "title": "Vikaspedia (Hindi): scientific cultivation of potato",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://agriculture.vikaspedia.in/viewcontent/agriculture/crop-production/92c93f93993e930-93093e91c94d92f-92e947902-91594393793f-92a94d93092393e932940/92c93f93993e930-92e947902-90992694d92f93e92893f915-92b93893294b902-915940-916947924940/93892c94d91c940/%E0%A4%86%E0%A4%B2%E0%A5%82-%E0%A4%95%E0%A5%80-%E0%A4%B5%E0%A5%88%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A4%BE%E0%A4%A8%E0%A4%BF%E0%A4%95-%E0%A4%96%E0%A5%87%E0%A4%A4%E0%A5%80?lgn=hi",
+    "type": "vikaspedia",
+    "crops": [
+      "potato"
+    ],
+    "lang": "hi"
+  },
+  {
+    "id": "vik_hi_potato_late_blight",
+    "title": "Vikaspedia (Hindi): the deadly late blight of potato",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://agriculture.vikaspedia.in/viewcontent/agriculture/crop-production/91593e93094d92f92a94d93092393e93293f92f94b902-91593e-938902915941932/90992694d92f93e92893f915940-92b938932947902/90992494d92493092a94d930926947936/%E0%A4%86%E0%A4%B2%E0%A5%82-%E0%A4%95%E0%A4%BE-%E0%A4%98%E0%A4%BE%E0%A4%A4%E0%A4%95-%E0%A4%9D%E0%A5%81%E0%A4%B2%E0%A4%B8%E0%A4%BE-%E0%A4%B0%E0%A5%8B%E0%A4%97?lgn=hi",
+    "type": "vikaspedia",
+    "crops": [
+      "potato"
+    ],
+    "lang": "hi"
+  },
+  {
+    "id": "vik_te_tomato",
+    "title": "Vikaspedia (Telugu): tomato cultivation",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://te.vikaspedia.in/viewcontent/agriculture/c1cc3fc32c4dc32c3ec32-c35c3ec30c3f-c38c2ec3ec1ac3ec30c02/c06c02c27c4dc30c2ac4dc30c26c47c36c4d-c32c4b-c35c4dc2fc35c38c3ec2f-c2ac02c1fc32c41/c09c26c4dc2fc3ec28-c35c3ec28-c2ac02c1fc32c41/%E0%B0%9F%E0%B0%AE%E0%B0%BE%E0%B0%9F?lgn=te",
+    "type": "vikaspedia",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "te"
+  },
+  {
+    "id": "vik_te_summer_vegetables",
+    "title": "Vikaspedia (Telugu): summer vegetable cultivation practices",
+    "org": "Vikaspedia (Government of India)",
+    "url": "https://te.vikaspedia.in/viewcontent/agriculture/best-practices/c2fc41c35-c30c24c41c32-c36c3fc15c4dc37c23c3e-c2ac3ec20c4dc2f-c2ac4dc30c23c3ec33c3fc15/c35c3fc35c3fc27-c2ac02c1fc32c32c4b-c09c24c4dc24c2e-c2fc3ec1cc2ec3ec28c4dc2f-c2ac26c4dc27c24c41c32c41-1/c35c47c38c35c3f-c15c42c30c17c3ec2fc32-c38c3ec17c41c32c4b-c1ac47c2ac1fc4dc1fc35c32c38c3fc28-c2ac4dc30c24c4dc2fc47c15-c2fc3ec1cc2ec3ec28c4dc2f-c2ac26c4dc26c24c41c32c41?lgn=te",
+    "type": "vikaspedia",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "te"
+  },
+  {
+    "id": "tnau_tomato_season_varieties",
+    "title": "TNAU: tomato season and varieties",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/agri_seasonandvarieties_tomato.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_soil",
+    "title": "TNAU: tomato soil and climate",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/horti_vegetables_tomato_Soil.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_cultural",
+    "title": "TNAU: tomato cultural practices",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/horti_vegetables_tomato_cultural%20practices.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_irrigation",
+    "title": "TNAU: tomato irrigation",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/horti_vegetables_tomato_irrigation.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_seed",
+    "title": "TNAU: tomato seed and nursery",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/horti_vegetables_tomato_seed.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_potato_cultivation",
+    "title": "TNAU: potato cultivation (varieties, soil, season, seed rate, protection)",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/horticulture/horti_vegetables_potato.html",
+    "type": "html",
+    "crops": [
+      "potato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_1",
+    "title": "TNAU: tomato insect pest, fruit borer",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_1.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_2",
+    "title": "TNAU: tomato insect pest, serpentine leaf miner",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_2.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_3",
+    "title": "TNAU: tomato insect pest, leaf eating caterpillar",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_3.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_4",
+    "title": "TNAU: tomato insect pest, whitefly",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_4.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_5",
+    "title": "TNAU: tomato insect pest, thrips",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_5.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_6",
+    "title": "TNAU: tomato insect pest, striped mealybug",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_6.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_7",
+    "title": "TNAU: tomato insect pest, red spider mite",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_7.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
+  },
+  {
+    "id": "tnau_tomato_pest_8",
+    "title": "TNAU: tomato insect pest, pinworm",
+    "org": "Tamil Nadu Agricultural University",
+    "url": "https://agritech.tnau.ac.in/crop_protection/tomato/tomato_8.html",
+    "type": "html",
+    "crops": [
+      "tomato"
+    ],
+    "lang": "en"
   }
 ]

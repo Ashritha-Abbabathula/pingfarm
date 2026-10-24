@@ -191,5 +191,26 @@
     ]
   ],
   "tau_target_reached": true,
-  "tau_target": 0.8
+  "tau_target": 0.8,
+  "temperature_scaling": {
+    "temperature": 1.203,
+    "ece_before_on_field_test": 0.098,
+    "ece_after_on_field_test": 0.13,
+    "mean_confidence_before": 0.59,
+    "mean_confidence_after": 0.524,
+    "field_test_accuracy": 0.565,
+    "old_tau": 0.85,
+    "new_tau": 0.75,
+    "new_tau_target_reached": true,
+    "field_test_at_old_tau_unscaled": {
+      "coverage": 0.129,
+      "accuracy_on_answered": 0.727
+    },
+    "field_test_at_new_tau_scaled": {
+      "coverage": 0.129,
+      "accuracy_on_answered": 0.727
+    },
+    "adopted": false,
+    "conclusion": "Not adopted: calibration error got worse on the held-out field photos (0.098 -> 0.130); average confidence (0.59) was already close to accuracy (0.565). Fitting one parameter on 133 validation photos is noisy."
+  }
 }

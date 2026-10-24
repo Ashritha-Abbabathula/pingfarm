@@ -113,3 +113,45 @@ def test_webhook_dedupes_and_replies(parts):
     for _ in range(3):  # Meta retries the same message
         assert client.post("/webhook", json=payload).status_code == 200
     assert len(wa.sent) == 1
+
+
+# ---------------------------------------------------------------- profile, outlook, alerts, deletion
+def _risky():
+    from pingfarm.tools.weather import DayForecast
+    return [DayForecast(f"2026-10-2{i}", 6, 80, 12, 22, 93) for i in range(1, 5)]
+
+
+def test_soil_is_remembered_and_outlook_uses_it(parts):
+    a = make_agent(parts, forecast=_risky())
+    a.handle("p1", location=(17.4, 78.5))
+    a.handle("p1", text="I grow potato in my field")
+    r = a.handle("p1", text="my soil is black soil")
+    assert "soil: black" in r.text
+    r = a.handle("p1", text="What should I do this week for my potato given the weather?")
+    assert "late blight" in r.text.lower() and "Soil (black)" in r.text
+
+
+def test_outlook_asks_for_location_first(parts):
+    a = make_agent(parts)
+    assert "location" in a.handle("p2", text="Which crop should I grow now, tomato or potato?").text.lower()
+
+
+def test_alerts_need_location_and_crop_then_turn_on(parts):
+    a = make_agent(parts)
+    assert "location" in a.handle("p3", text="alerts on").text.lower()
+    a.handle("p3", location=(17.4, 78.5))
+    a.handle("p3", text="I grow tomato in my field")
+    assert "ON" in a.handle("p3", text="alerts on").text
+    assert a.state.get_user("p3").alerts is True
+    assert "OFF" in a.handle("p3", text="alerts off").text
+
+
+def test_delete_my_data(parts):
+    a = make_agent(parts)
+    a.handle("p4", location=(17.4, 78.5))
+    assert "deleted" in a.handle("p4", text="delete my data").text.lower()
+    assert a.state.get_user("p4").lat is None
+
+
+def test_romanised_price_question_is_a_price_intent(parts):
+    assert make_agent(parts).detect_intent("aaj tamatar ka mandi bhav kya hai") == "price"

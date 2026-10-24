@@ -75,10 +75,28 @@ BASE = [
 ]
 
 
+# Extra accepted documents/evidence added when the knowledge base grew to Hindi/Telugu pages and the
+# TNAU cultivation and pest pages. A question may now be answered by a source in ANY language, so the
+# evidence list mixes English, Hindi and Telugu phrases (all verified to exist in the downloaded text).
+EXTRA = {
+    "leafcurl-control": (["tnau_tomato_pest_4", "vik_te_tomato", "vik_hi_tomato_cultivation"],
+                         ["అడ్డుపంట", "सफेद मक्खी"]),
+    "tomato-bacterial-wilt-symptom": (["vik_te_tomato"], ["బాక్టీరియల్ విల్డ్"]),
+    "potato-resistant-varieties": (["tnau_potato_cultivation", "vik_hi_potato_late_blight"],
+                                   ["late blight resistant varieties", "कुफरी नवीन"]),
+    "tomato-powdery-mildew-spray": (["vik_te_summer_vegetables"], ["బూడిద తెగులు"]),
+    "potato-first-spray-timing": (["tnau_potato_cultivation", "vik_hi_potato_late_blight"],
+                                  ["45, 60 and 75 days after planting", "लक्षण दिखाई देते ही"]),
+    "potato-disease-forecasting": (["vik_hi_potato_late_blight"], ["पूर्वानुमान"]),
+}
+
+
 def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = []
     for key, docs, evidence, en, hi, te in BASE:
+        extra_docs, extra_ev = EXTRA.get(key, ([], []))
+        docs, evidence = docs + extra_docs, evidence + extra_ev
         for lang, text in (("en", en), ("hi", hi), ("te", te)):
             rows.append(
                 {"id": f"{key}.{lang}", "lang": lang, "text": text, "doc_ids": docs, "evidence": evidence}

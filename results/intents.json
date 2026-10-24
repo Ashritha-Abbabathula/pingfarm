@@ -1,0 +1,58 @@
+{
+  "V1 (before)": {
+    "romanised": {
+      "n": 24,
+      "accuracy": 0.708,
+      "per_intent": {
+        "spray_timing": 0.75,
+        "price": 0.38,
+        "advice": 1.0
+      }
+    },
+    "kcc_real_english": {
+      "n": 257,
+      "accuracy": 0.883,
+      "per_intent": {
+        "price": 0.82,
+        "spray_timing": 0.83,
+        "advice": 0.95
+      }
+    },
+    "starter_en_hi_te": {
+      "n": 39,
+      "accuracy": 1.0
+    }
+  },
+  "V2 (after)": {
+    "romanised": {
+      "n": 24,
+      "accuracy": 0.833,
+      "per_intent": {
+        "spray_timing": 1.0,
+        "price": 0.62,
+        "advice": 0.88
+      }
+    },
+    "kcc_real_english": {
+      "n": 257,
+      "accuracy": 0.626,
+      "per_intent": {
+        "price": 0.85,
+        "spray_timing": 0.17,
+        "advice": 0.75
+      }
+    },
+    "starter_en_hi_te": {
+      "n": 39,
+      "accuracy": 0.923
+    },
+    "outlook (V2 only)": {
+      "n": 10,
+      "accuracy": 0.8
+    },
+    "off_topic_30 (V2 only)": {
+      "n": 30,
+      "accuracy": 0.233
+    }
+  }
+}

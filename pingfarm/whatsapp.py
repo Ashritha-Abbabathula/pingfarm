@@ -82,6 +82,20 @@ class WhatsAppClient:
             timeout=20,
         ).raise_for_status()
 
+    def send_template(self, to: str, name: str, params: list[str], language: str = "en"):
+        """Send a pre-approved template message (the only kind allowed outside the 24-hour window)."""
+        self.sent.append((to, f"[template:{name}] " + " | ".join(params)))
+        if self.dry_run:
+            return
+        httpx.post(
+            f"{GRAPH}/{self.phone_id}/messages",
+            headers={"Authorization": f"Bearer {self.token}"},
+            json={"messaging_product": "whatsapp", "to": to, "type": "template",
+                  "template": {"name": name, "language": {"code": language},
+                               "components": [{"type": "body", "parameters": [{"type": "text", "text": p} for p in params]}]}},
+            timeout=20,
+        ).raise_for_status()
+
     def download_media(self, media_id: str) -> bytes:
         headers = {"Authorization": f"Bearer {self.token}"}
         meta = httpx.get(f"{GRAPH}/{media_id}", headers=headers, timeout=20).raise_for_status().json()

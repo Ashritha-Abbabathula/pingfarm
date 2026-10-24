@@ -46,3 +46,9 @@ def test_metrics():
     assert first_relevant_rank(hits, q) == 2
     assert hit_at_k([2, None, 1], 1) == 1 / 3
     assert abs(mrr([2, None, 1]) - 0.5) < 1e-9
+
+
+def test_document_level_label_has_no_evidence_requirement():
+    q = Question("q", "en", "?", ["d1"], [])
+    assert is_relevant("d1", "anything at all", q)
+    assert not is_relevant("d2", "anything at all", q)
