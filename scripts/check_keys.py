@@ -36,6 +36,25 @@ def check_anthropic():
         return report("anthropic", False, f"{type(exc).__name__}: {str(exc)[:160]}")
 
 
+def check_gemini():
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key:
+        return print("gemini       SKIPPED (GEMINI_API_KEY not set)") or None
+    model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-2.5-flash")
+    try:
+        r = httpx.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+            headers={"x-goog-api-key": key},
+            json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
+            timeout=30,
+        )
+        if r.status_code == 200:
+            return report("gemini", True, f"model {model} answered")
+        return report("gemini", False, f"HTTP {r.status_code}: {r.json().get('error', {}).get('message', '')[:160]}")
+    except Exception as exc:
+        return report("gemini", False, f"{type(exc).__name__}: {str(exc)[:160]}")
+
+
 def check_data_gov():
     key = os.environ.get("DATA_GOV_API_KEY")
     if not key:
@@ -67,7 +86,7 @@ def check_whatsapp():
 
 
 if __name__ == "__main__":
-    for fn in (check_anthropic, check_data_gov, check_whatsapp):
+    for fn in (check_gemini, check_anthropic, check_data_gov, check_whatsapp):
         fn()
     for name in ("WHATSAPP_VERIFY_TOKEN", "WHATSAPP_APP_SECRET"):
         print(f"{name:22s} {'set' if os.environ.get(name) else 'NOT SET'}")

@@ -1,6 +1,6 @@
 """Writing the final answer, and making sure it is safe.
 
-Two answerers share one interface:
+Answerers share one interface (GeminiAnswerer is the same idea as ClaudeAnswerer, with Google's API):
   ClaudeAnswerer      : a language model writes a short reply, in the farmer's language,
                         using ONLY the retrieved passages.
   ExtractiveAnswerer  : no AI at all. Quotes the most relevant passages with their source.
@@ -142,8 +142,44 @@ class ClaudeAnswerer:
         return Answer(safe, sources_from(hits), triggered)
 
 
+class GeminiAnswerer:
+    """Same job as ClaudeAnswerer, using Google's Gemini API (has a free tier). Plain HTTP, no extra package."""
+
+    URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+    def __init__(self, model: str | None = None, client=None, max_tokens: int = 500):
+        import httpx
+
+        self.client = client or httpx.Client(timeout=60)
+        self.model = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-2.5-flash")
+        self.max_tokens = max_tokens
+
+    def answer(self, question: str, hits: list[Hit], context: str = "") -> Answer:
+        passages = "\n\n".join(f"[{i}] {' '.join(h.chunk.text.split())}" for i, h in enumerate(hits, 1))
+        user = f"Passages:\n{passages}\n\n"
+        if context:
+            user += f"Extra facts (weather/prices):\n{context}\n\n"
+        user += f"Farmer's question: {question}"
+        resp = self.client.post(
+            self.URL.format(model=self.model),
+            headers={"x-goog-api-key": os.environ.get("GEMINI_API_KEY", "")},
+            json={
+                "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+                "contents": [{"role": "user", "parts": [{"text": user}]}],
+                "generationConfig": {"maxOutputTokens": self.max_tokens},
+            },
+        )
+        resp.raise_for_status()
+        parts = resp.json()["candidates"][0].get("content", {}).get("parts", [])
+        text = "".join(p.get("text", "") for p in parts)
+        safe, triggered = dose_guard(text, [h.chunk.text for h in hits] + [context])
+        return Answer(safe, sources_from(hits), triggered)
+
+
 def default_answerer():
-    """Claude if an API key is configured, otherwise the extractive fallback."""
+    """Gemini if its key is set, else Claude if its key is set, otherwise the extractive fallback."""
+    if os.environ.get("GEMINI_API_KEY"):
+        return GeminiAnswerer()
     if os.environ.get("ANTHROPIC_API_KEY"):
         return ClaudeAnswerer()
     return ExtractiveAnswerer()

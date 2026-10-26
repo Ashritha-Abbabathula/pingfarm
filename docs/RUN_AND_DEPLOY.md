@@ -32,7 +32,17 @@ If it says *"no Tomato rows came back"*: the key is fine but the price tool's fi
 to the live data. The tool was built from the published schema and tested only on sample data, so this is the first
 place a small fix may be needed. Send me the message and I will fix it.
 
-## 2. Anthropic key (paid, a few dollars is plenty): Claude writes the replies
+## 2a. Gemini key (free tier): Gemini writes the replies (recommended, no payment needed)
+
+1. Go to https://aistudio.google.com/apikey and sign in with a Google account.
+2. Click **Create API key** and copy it.
+3. Put it in `.env` as `GEMINI_API_KEY=...` (never paste it anywhere else). Leave `PINGFARM_GEMINI_MODEL` as it is; if the check says the model is not found, look up the current free Flash model name on the same site and put it there.
+4. Run `python scripts/check_keys.py`. You want `gemini OK`.
+5. Start the app (section 4) and check `/health`: `"llm"` should say `GeminiAnswerer`.
+
+The free tier has daily request limits (see the AI Studio page). If both Gemini and Anthropic keys are set, Gemini is used.
+
+## 2b. Anthropic key (paid, optional): Claude writes the replies
 
 1. Go to https://console.anthropic.com and sign in or create an account.
 2. Add a small amount of credit under **Billing** (for example $5). Each reply costs a fraction of a cent with the default small model.
