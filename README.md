@@ -28,9 +28,7 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 | + contextual chunk headers | 0.67 | 0.41 | 0.92 | 0.15 | 0.15 |
 | + cross-encoder reranker (used in the app) | 0.77 | 0.49 | 0.77 | 0.31 | 0.38 |
 
-**This got worse when the knowledge base grew from 21 to 41 documents, mostly in Hindi and Telugu, and the cause
-is not known.** One untested guess: the new Hindi/Telugu pages are valid sources that the old evidence-phrase
-labels do not count. Old numbers: `results/retrieval_experiments_v1_21docs.csv`.
+**This got worse when the knowledge base grew from 21 to 41 documents, mostly in Hindi and Telugu.** A quick check points to a same-language bias: on 22 of the 26 Hindi/Telugu questions that missed (dense + header), all top-3 results were Hindi or Telugu pages, although the answers mostly live in the English pages. One setup, 26 questions: a strong lead, not proven, and not yet fixed. Old numbers: `results/retrieval_experiments_v1_21docs.csv`.
 
 **Retrieval on 153 real farmer questions** (Kisan Call Centre open data, English only, document-level labels, a
 looser test than the starter set; the text is the call-centre operator's summary, not the farmer's own words)
@@ -115,7 +113,7 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 - Small test sets: 39 text questions (machine-drafted Hindi/Telugu; check the wording with a native speaker), 153 real
   questions (English only, operator summaries) and 85 field photos.
 - The knowledge base has 41 documents but only 6 are Hindi or Telugu. Starter-set Hindi/Telugu retrieval fell after
-  it grew (cause unknown). Not yet fully sorted: which real-question misses are retrieval failures and which are gaps.
+  it grew (likely a same-language bias, not yet fixed). Not yet fully sorted: which real-question misses are retrieval failures and which are gaps.
 - The weather-risk, soil-fit and market features are screening rules from the documents, not validated forecasts;
   prices are not profit; there is no soil measurement.
 - PlantVillage may contain several photos of one leaf; its train/test split was not independently checked,
