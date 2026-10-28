@@ -84,9 +84,11 @@ class Agent:
     def __init__(self, retriever: Retriever, answerer, embedder: Embedder, state: State,
                  classifier=None, abstain_threshold: float | None = None,
                  weather_fn=weather_tool.fetch_forecast, price_fn=price_tool.fetch_prices,
-                 calibration_path: Path | None = None, rerank: bool = False, use_gate: bool = True):
+                 calibration_path: Path | None = None, rerank: bool = False, use_gate: bool = True,
+                 balance_languages: bool = True):
         self.retriever, self.answerer, self.state = retriever, answerer, state
         self.classifier, self.rerank = classifier, rerank
+        self.balance_languages = balance_languages  # English pages compete for Hindi/Telugu questions (D37)
         self.weather_fn, self.price_fn = weather_fn, price_fn
         self.embedder = embedder
         self.abstain_threshold = abstain_threshold if abstain_threshold is not None else _load_threshold(calibration_path)
@@ -112,7 +114,8 @@ class Agent:
         """Retrieve for `query`. The "do I know this?" gate looks at `gate_text` (the farmer's own words):
         we must NOT judge it on `query`, because adding a crop name ("tomato ...") drags ANY question,
         even about France, closer to our tomato documents and past the cut-off."""
-        hits = self.retriever.search(query, mode="dense", k=k, rerank=self.rerank)
+        hits = self.retriever.search(query, mode="dense", k=k, rerank=self.rerank,
+                                     balance_languages=self.balance_languages)
         sim = self.retriever.top_similarity(gate_text if gate_text is not None else query)
         trace.append(f"retrieved {len(hits)} passages; closest similarity {sim:.3f} (abstain below {self.abstain_threshold:.3f})")
         return hits, sim
