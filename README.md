@@ -7,7 +7,7 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 
 > Status (version 2, branch `v2-wip`): retrieval, evaluation on real farmer questions, leaf-photo classifier,
 > learned topic gate and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets,
-> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (57 tests passing).
+> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (60 tests passing).
 > **Not done:** live tests of the language-model answerers (Gemini or Claude), live WhatsApp and price-API
 > connections (need your credentials), speech-to-text, and the farmer pilot.
 > See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md).
@@ -26,9 +26,10 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 |---|---|---|---|---|---|
 | Dense, fixed-200 chunks | 0.54 | 0.31 | 0.69 | 0.08 | 0.15 |
 | + contextual chunk headers | 0.67 | 0.41 | 0.92 | 0.15 | 0.15 |
-| + cross-encoder reranker (used in the app) | 0.77 | 0.49 | 0.77 | 0.31 | 0.38 |
+| + cross-encoder reranker | 0.77 | 0.49 | 0.77 | 0.31 | 0.38 |
+| + language-balanced search (used in the app) | not built | **0.77** | 0.85 | 0.69 | 0.77 |
 
-**This got worse when the knowledge base grew from 21 to 41 documents, mostly in Hindi and Telugu.** A quick check points to a same-language bias: on 22 of the 26 Hindi/Telugu questions that missed (dense + header), all top-3 results were Hindi or Telugu pages, although the answers mostly live in the English pages. One setup, 26 questions: a strong lead, not proven, and not yet fixed. Old numbers: `results/retrieval_experiments_v1_21docs.csv`.
+**This got worse when the knowledge base grew from 21 to 41 documents, mostly in Hindi and Telugu.** The cause was a same-language bias: on 22 of the 26 Hindi/Telugu questions that missed (dense + header), all top-3 results were Hindi or Telugu pages, although the answers mostly live in the English pages. The fix fuses a second, English-only ranking with the normal one (`balance_languages`); the last row is the result, back at the old 21-document level (full table: `results/language_balance.csv`). Caveat: only 26 Hindi/Telugu questions, and the fix was chosen and measured on the same sets, so the gain is probably a little optimistic. It helps dense search; hybrid search was mixed (the app uses dense). Old numbers: `results/retrieval_experiments_v1_21docs.csv`.
 
 **Retrieval on 153 real farmer questions** (Kisan Call Centre open data, English only, document-level labels, a
 looser test than the starter set; the text is the call-centre operator's summary, not the farmer's own words)
@@ -37,10 +38,11 @@ looser test than the starter set; the text is the call-centre operator's summary
 |---|---|---|
 | Dense, fixed-200 chunks | 0.69 | 0.46 |
 | + contextual chunk headers | 0.79 | 0.60 |
-| + cross-encoder reranker (used in the app) | 0.74 | 0.56 |
+| + cross-encoder reranker | 0.74 | 0.56 |
+| + language-balanced search (used in the app) | 0.75 | not measured |
 | Section chunks + headers, dense, no reranker (best of 18) | 0.86 | 0.69 |
 
-The reranker lowers real-question Hit@3 for the header setups, so keeping it on is an open decision (D36).
+The reranker lowers real-question Hit@3 slightly for the header setups (0.79 to 0.74, or 0.75 with the language fix), but with the language fix it lifts Hindi and Telugu a lot, so it stays on (D36).
 Weakest topics: blight (0.08, partly a labelling problem) and irrigation (0.20, a retrieval failure: the page exists).
 Keyword (BM25) search scores near 0 on Hindi and Telugu (no shared words). Hybrid vs dense is inconclusive.
 One starter question moves Hit@k by 2.6 points (7.7 within one language): treat differences as directional.
@@ -100,7 +102,7 @@ python -m venv <somewhere>/pingfarm-venv   # then activate it
 pip install -r requirements.txt
 python scripts/fetch_corpus.py              # downloads the source documents
 python scripts/build_starter_questions.py   # writes data/eval/questions.jsonl
-python -m pytest -q tests                   # 57 tests (about 3 minutes)
+python -m pytest -q tests                   # 60 tests (about 2 minutes)
 python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quick skips the reranker)
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)
@@ -113,12 +115,12 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 - Small test sets: 39 text questions (machine-drafted Hindi/Telugu; check the wording with a native speaker), 153 real
   questions (English only, operator summaries) and 85 field photos.
 - The knowledge base has 41 documents but only 6 are Hindi or Telugu. Starter-set Hindi/Telugu retrieval fell after
-  it grew (likely a same-language bias, not yet fixed). Not yet fully sorted: which real-question misses are retrieval failures and which are gaps.
+  it grew; a language-balanced search recovered it, but only 26 Hindi/Telugu questions measure that. Not yet fully sorted: which real-question misses are retrieval failures and which are gaps.
 - The weather-risk, soil-fit and market features are screening rules from the documents, not validated forecasts;
   prices are not profit; there is no soil measurement.
 - PlantVillage may contain several photos of one leaf; its train/test split was not independently checked,
   so the lab score is an upper bound.
-- The reranker's gain shrank on the larger corpus and on real questions (see D36).
+- The reranker lowers English real-question Hit@3 a little (see D36).
 - Romanised Hindi/Telugu ("mera tamatar ka bhav") intent detection is only partly handled (about 79% on a small set).
 - The price and markets tools were tested on recorded sample data only; WhatsApp and the Gemini/Claude answerers were
   not exercised live. WhatsApp alert templates still need Meta's approval.
