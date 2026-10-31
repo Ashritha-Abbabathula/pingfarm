@@ -1,0 +1,154 @@
+id,topic,text,accepted,rank,kind,wrong_crop_top1,top3
+kcc0003,sucking-pests,Farmer wants to know information about how to control sucking pest in tomato crop,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,2,hit,True,tnau_potato_cultivation;tnau_tomato_pest_4;tnau_tomato_pest_3
+kcc0006,fruit-borer,Farmer want to know information about how to control stem borer/caterpillar in tomato ......crop,tnau_tomato_pest_1,2,hit,False,tnau_tomato_pest_3;tnau_tomato_pest_1;icar_indfarm_review
+kcc0008,caterpillar,Farmer need information regarding control measures of caterpillars attack in tomato crop,tnau_tomato_pest_3,1,hit,False,tnau_tomato_pest_3;tnau_tomato_pest_8;tnau_tomato_pest_1
+kcc0009,sucking-pests,How to control sucking pest in tomato crop,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_4;tnau_potato_cultivation;tnau_tomato_pest_5
+kcc0010,blight,Information regarding control of Blight in Tomato crop,tnau_tomato_02;tnau_tomato_08,7,ranked low (rank 6-20),True,icar_indfarm_potato_2019;icar_indfarm_potato_2019;tnau_potato_cultivation
+kcc0012,caterpillar,Farmer want to know information about how to control defoliators in Tomato,tnau_tomato_pest_3,2,hit,False,tnau_tomato_cultural;tnau_tomato_pest_3;tnau_potato_cultivation
+kcc0015,fruit-borer,farmer want to know information about how to control fruit & shoot borer in tomato crop,tnau_tomato_pest_1,1,hit,False,tnau_tomato_pest_1;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0016,season,Information regarding sowing time of tomato,tnau_tomato_season_varieties;tnau_tomato_soil,1,hit,False,tnau_tomato_soil;tnau_tomato_seed;tnau_tomato_seed
+kcc0020,varieties,VARIETIES OF POTATO,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_potato_2019;tnau_potato_06
+kcc0021,sucking-pests,Farmer asked about sucking pest attack on tomato,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,7,ranked low (rank 6-20),False,tnau_tomato_09;tnau_tomato_07;icar_indfarm_review
+kcc0025,leaf-spot,LEAF SPOT MANAGEMENT IN TOMATO,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_04;icar_indfarm_potato_2019;tnau_tomato_pest_4
+kcc0026,wilt,Tomato wilting,tnau_tomato_03;tnau_tomato_05,1,hit,False,tnau_tomato_05;tnau_tomato_07;tnau_tomato_03
+kcc0027,varieties,FARMER ASKING ABOUT VARIETY OF POTATO,tnau_potato_cultivation,4,near miss (rank 4-5),False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_potato_2019
+kcc0028,varieties,FARMER ASKED ABOUT VARIETIES OF TOMATO,tnau_tomato_season_varieties,1,hit,False,tnau_tomato_season_varieties;tnau_tomato_soil;icar_indfarm_review
+kcc0029,scurf,Information regarding seed treatment for control of black scurf in Potato crop,tnau_potato_04,2,hit,False,icar_indfarm_review;tnau_potato_04;tnau_potato_04
+kcc0030,varieties,Variety of tomato -,tnau_tomato_season_varieties,1,hit,False,tnau_tomato_season_varieties;tnau_tomato_cultural;tnau_tomato_pest_1
+kcc0035,varieties,Information regarding varieties of Potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;tnau_potato_01;tnau_potato_02
+kcc0036,varieties,Tomato Variety -,tnau_tomato_season_varieties,1,hit,False,tnau_tomato_season_varieties;tnau_tomato_seed;tnau_tomato_cultural
+kcc0039,blight,Blight of tomato,tnau_tomato_02;tnau_tomato_08,1,hit,False,tnau_tomato_02;tnau_tomato_08;tnau_tomato_02
+kcc0040,caterpillar,Farmer wants to know information about How to control caterpillars in tomato crop,tnau_tomato_pest_3,1,hit,False,tnau_tomato_pest_3;tnau_tomato_pest_1;tnau_tomato_pest_8
+kcc0041,varieties,farmer want to know information about Varieties of Tomato,tnau_tomato_season_varieties,1,hit,False,tnau_tomato_season_varieties;tnau_tomato_seed;tnau_tomato_03
+kcc0042,seed-nursery,farmer asked about before grown nursery protection,tnau_tomato_seed,6,ranked low (rank 6-20),False,tnau_potato_cultivation;tnau_potato_cultivation;tnau_tomato_soil
+kcc0043,leaf-curl,Leaf curl in Tomato,tnau_tomato_06,1,hit,False,tnau_tomato_06;tnau_tomato_pest_4;tnau_tomato_11
+kcc0047,late-blight,INFORMATION REGARDING EARLY AND LATE BLIGHT OF POTATO,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,icar_indfarm_review;icar_indfarm_review;icar_indfarm_potato_2019
+kcc0048,damping-off,Damping off in tomato seedlings,tnau_tomato_01,1,hit,False,tnau_tomato_01;tnau_tomato_01;tnau_tomato_pest_1
+kcc0049,spotted-wilt,tomato spotted wilt diseases control ;,tnau_tomato_07,2,hit,False,tnau_tomato_pest_5;tnau_tomato_07;tnau_tomato_03
+kcc0050,leaf-miner,FARMER ASKED ABOUT ATTACK OF LEAF MINER ON TOMATO,tnau_tomato_pest_2,1,hit,False,tnau_tomato_pest_2;tnau_tomato_pest_3;tnau_tomato_04
+kcc0051,blight,Farmer wants to know information about control measure Blight in Tomato crop,tnau_tomato_02;tnau_tomato_08,10,ranked low (rank 6-20),True,icar_indfarm_review;icar_indfarm_review;icar_indfarm_review
+kcc0052,blight,Leaf blight in Tomato-,tnau_tomato_02;tnau_tomato_08,4,near miss (rank 4-5),False,tnau_tomato_04;icar_indfarm_review;tnau_tomato_06
+kcc0053,early-blight,EARLY BLIGHT IN POTATO,tnau_potato_02;tnau_potato_cultivation,2,hit,False,icar_indfarm_review;tnau_potato_02;icar_indfarm_review
+kcc0054,fruit-borer,Fruit borer and thrips in tomato-,tnau_tomato_pest_1,1,hit,False,tnau_tomato_pest_1;tnau_tomato_pest_1;tnau_tomato_07
+kcc0055,early-blight,-Information regarding late blight and early blight,tnau_potato_02;tnau_potato_cultivation,11,ranked low (rank 6-20),False,icar_indfarm_review;icar_indfarm_review;icar_indfarm_review
+kcc0056,sucking-pests,Ask about sucking pest problem in tomato crop,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_4;tnau_tomato_pest_3;tnau_tomato_pest_5
+kcc0057,late-blight,Tomato late blight disease,tnau_tomato_08,2,hit,True,icar_indfarm_potato_2019;tnau_tomato_08;tnau_tomato_08
+kcc0058,late-blight,Early and late blight of tomato,tnau_tomato_08,4,near miss (rank 4-5),False,tnau_tomato_02;icar_indfarm_review;tnau_potato_02
+kcc0059,fruit-borer,farmer want to know information about how to control fruit & shoot borer in tomato,tnau_tomato_pest_1,1,hit,False,tnau_tomato_pest_1;icar_indfarm_potato_2019;tnau_tomato_pest_1
+kcc0060,damping-off,Damping off in tomato plants,tnau_tomato_01,1,hit,False,tnau_tomato_01;tnau_tomato_01;tnau_tomato_cultural
+kcc0061,leaf-miner,Leaf miner in tomato,tnau_tomato_pest_2,1,hit,False,tnau_tomato_pest_2;tnau_tomato_pest_8;tnau_tomato_04
+kcc0062,caterpillar,FARMER ASKED ABOUT CONTROL CATERPILLAR ATTACK IN TOMATO CROP,tnau_tomato_pest_3,1,hit,False,tnau_tomato_pest_3;tnau_tomato_pest_1;icar_indfarm_potato_2019
+kcc0063,caterpillar,FARMER ASKED ABOUT CONTROL OF ATTACK OF CATERPILLAR ON TOMATO CROP,tnau_tomato_pest_3,1,hit,False,tnau_tomato_pest_3;tnau_tomato_pest_1;icar_indfarm_potato_2019
+kcc0064,season,FARMER ASKED ABOUT SOWING TIME OF TOMATO,tnau_tomato_season_varieties;tnau_tomato_soil,1,hit,False,tnau_tomato_soil;tnau_tomato_seed;tnau_tomato_irrigation
+kcc0065,whitefly,Asked about Attack of White Fly on tomato,tnau_tomato_pest_4,1,hit,False,tnau_tomato_pest_4;tnau_tomato_09;tnau_tomato_08
+kcc0066,caterpillar,farmer want to know information about How to control caterpillars in vegetable crop,tnau_tomato_pest_3,1,hit,False,tnau_tomato_pest_3;icar_indfarm_review;tnau_tomato_pest_1
+kcc0067,whitefly,farmer want to know information about How to control white fly in crop,tnau_tomato_pest_4,1,hit,False,tnau_tomato_pest_4;icar_indfarm_potato_2019;icar_indfarm_potato_2019
+kcc0068,sucking-pests,Farmer wants to know about how to control of insect sucking pest in tomato crop,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_4;tnau_tomato_pest_6;tnau_potato_cultivation
+kcc0069,sucking-pests,ATTACK OF SUCKING PEST ON TOMATO,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_pest_6;tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_5;tnau_tomato_pest_4;tnau_tomato_09
+kcc0070,varieties,varieties of tomato,tnau_tomato_season_varieties,1,hit,False,tnau_tomato_season_varieties;tnau_tomato_seed;tnau_tomato_soil
+kcc0071,leaf-miner,Leaf minor in tomato,tnau_tomato_pest_2,5,near miss (rank 4-5),False,tnau_tomato_11;tnau_tomato_04;tnau_tomato_06
+kcc0072,wilt,WILT IN TOMATO,tnau_tomato_03;tnau_tomato_05,1,hit,False,tnau_tomato_03;tnau_tomato_05;tnau_potato_06
+kcc0073,varieties,ASKED ABOUT TOMATO VARIETIES,tnau_tomato_season_varieties,3,hit,False,tnau_tomato_seed;tnau_tomato_cultural;tnau_tomato_season_varieties
+kcc0074,blight,Information regarding for control of Blight in Tomato crop,tnau_tomato_02;tnau_tomato_08,7,ranked low (rank 6-20),True,icar_indfarm_potato_2019;icar_indfarm_potato_2019;tnau_potato_cultivation
+kcc0075,fruit-borer,Fruit borer in Tomato,tnau_tomato_pest_1,1,hit,False,tnau_tomato_pest_1;tnau_tomato_pest_1;tnau_tomato_02
+kcc0076,early-blight,information regarding control of early blight and late blight in potato crop,tnau_potato_02;tnau_potato_cultivation,2,hit,False,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_review
+kcc0077,irrigation,Farmer asked Water management in tomato crop,tnau_tomato_irrigation,5,near miss (rank 4-5),False,tnau_tomato_01;tnau_tomato_03;tnau_tomato_11
+kcc0078,cultivation,farmer want to know information about sowing time in crop potato,tnau_potato_cultivation,7,ranked low (rank 6-20),False,icar_indfarm_potato_2019;icar_indfarm_review;icar_indfarm_review
+kcc0079,season,FARMER ASKED ABOUT SOWING TIME OF TOMATO CROP,tnau_tomato_season_varieties;tnau_tomato_soil,3,hit,True,icar_indfarm_potato_2019;icar_indfarm_potato_2019;tnau_tomato_soil
+kcc0080,wilt,Fusarium wilting in Tomato,tnau_tomato_03;tnau_tomato_05,1,hit,False,tnau_tomato_03;icar_indfarm_review;tnau_tomato_05
+kcc0081,wilt,Wilting in Tomato,tnau_tomato_03;tnau_tomato_05,1,hit,False,tnau_tomato_05;tnau_tomato_cultural;tnau_tomato_03
+kcc0082,blight,ASKING ABOUT CONTROL OF BLIGHT ATTACK IN TOMATO,tnau_tomato_02;tnau_tomato_08,8,ranked low (rank 6-20),False,tnau_tomato_pest_3;tnau_potato_cultivation;tnau_tomato_pest_4
+kcc0083,leaf-curl,farmer ask about attack virus leaf curl virus in tomato,tnau_tomato_06,1,hit,False,tnau_tomato_06;tnau_tomato_12;tnau_tomato_07
+kcc0084,leaf-miner,Leafminer Management in Tomato,tnau_tomato_pest_2,1,hit,False,tnau_tomato_pest_2;tnau_tomato_pest_3;tnau_tomato_pest_4
+kcc0085,late-blight,Information regarding control of Late blight in tomato crop,tnau_tomato_08,6,ranked low (rank 6-20),True,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_review
+kcc0086,wilt,Regarding the wilting in the Tomato,tnau_tomato_03;tnau_tomato_05,1,hit,False,tnau_tomato_05;tnau_tomato_07;tnau_tomato_03
+kcc0087,varieties,variety of potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;tnau_potato_02;icar_indfarm_review
+kcc0088,mites,FARMER ASKED ABOUT RED MITES ATTACK ON TOMATO,tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_7;tnau_tomato_pest_2;icar_indfarm_review
+kcc0089,rot,PLANT PROTECTION,tnau_potato_03;tnau_potato_07,19,ranked low (rank 6-20),False,tnau_potato_cultivation;tnau_potato_cultivation;tnau_potato_cultivation
+kcc0090,cultivation,sowing time of potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;tnau_tomato_01;tnau_potato_cultivation
+kcc0091,whitefly,farmer want to know information about how to control white fly in tomato,tnau_tomato_pest_4,1,hit,False,tnau_tomato_pest_4;icar_indfarm_potato_2019;tnau_tomato_cultural
+kcc0092,whitefly,farmer want to know information about How to control white fly attack in tomato crop,tnau_tomato_pest_4,1,hit,False,tnau_tomato_pest_4;icar_indfarm_potato_2019;tnau_tomato_06
+kcc0093,late-blight,Late blight disease of potato,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0094,thrips,information regarding how to control thirps in tomato,tnau_tomato_pest_5,1,hit,False,tnau_tomato_pest_5;tnau_tomato_cultural;tnau_tomato_07
+kcc0095,cultivation,Information regarding seed rate in Potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;tnau_potato_cultivation;tnau_potato_cultivation
+kcc0096,leaf-miner,TOMATO SERPENTINE LEAF MINER,tnau_tomato_pest_2,1,hit,False,tnau_tomato_pest_2;tnau_tomato_04;tnau_tomato_pest_7
+kcc0097,season,SOWING TIME AND SEASON,tnau_tomato_season_varieties;tnau_tomato_soil,1,hit,False,tnau_tomato_soil;tnau_tomato_01;tnau_tomato_seed
+kcc0098,fruit-borer,Information regarding control of Fruit Borer in Tomato,tnau_tomato_pest_1,1,hit,False,tnau_tomato_pest_1;tnau_tomato_pest_1;tnau_tomato_pest_8
+kcc0099,wilt,To prevent wilting problem in tomato -,tnau_tomato_03;tnau_tomato_05,2,hit,False,tnau_tomato_cultural;tnau_tomato_03;tnau_tomato_pest_5
+kcc0100,irrigation,Ask about water management in tomato,tnau_tomato_irrigation,4,near miss (rank 4-5),False,tnau_tomato_01;tnau_tomato_cultural;tnau_tomato_09
+kcc0101,seed-nursery,ASKED ABOUT FUNGAL TREATMENT FOR SEEDLING,tnau_tomato_seed,4,near miss (rank 4-5),False,icar_indfarm_review;tnau_tomato_01;tnau_tomato_irrigation
+kcc0102,cultivation,Information regarding sowing time of potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_review;icar_indfarm_potato_2019
+kcc0103,mosaic,TOMATO MOSAIC VIRUS MANAGEMENT,tnau_tomato_12;tnau_tomato_07,4,near miss (rank 4-5),False,tnau_tomato_pest_1;tnau_tomato_pest_3;tnau_tomato_01
+kcc0104,season,Farmer wants to know information about sowing time of tomato crop in kharif,tnau_tomato_season_varieties;tnau_tomato_soil,2,hit,False,tnau_tomato_01;tnau_tomato_soil;tnau_tomato_09
+kcc0105,seed-nursery,Farmer wants to know information about how to control fungal attack in tomato crop nursery stage,tnau_tomato_seed,2,hit,False,tnau_tomato_cultural;tnau_tomato_seed;tnau_tomato_pest_3
+kcc0106,leaf-miner,Serpentine leaf miner in Tomato,tnau_tomato_pest_2,1,hit,False,tnau_tomato_pest_2;tnau_tomato_04;tnau_tomato_pest_8
+kcc0107,blight,information regarding sheath blight in potato,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,7,ranked low (rank 6-20),False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0108,leaf-spot,Septorial leaf spot management in Tomato,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_04;tnau_tomato_11;icar_indfarm_potato_2019
+kcc0109,leaf-spot,leaf spot in Tomato,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_11;tnau_tomato_04;icar_indfarm_review
+kcc0110,rot,Protection in potato from frost,tnau_potato_03;tnau_potato_07,16,ranked low (rank 6-20),False,tnau_potato_cultivation;tnau_potato_01;icar_indfarm_potato_2019
+kcc0111,blight,FARMER ASKED ABOUT BLIGHT ATTACK ON POTATO CROP,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,19,ranked low (rank 6-20),False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_potato_2019
+kcc0112,early-blight,Ask about early blight problem in tomato crop,tnau_tomato_02,1,hit,False,tnau_tomato_02;tnau_potato_02;tnau_potato_02
+kcc0113,season,TOMATO Season of sowing,tnau_tomato_season_varieties;tnau_tomato_soil,1,hit,False,tnau_tomato_soil;tnau_tomato_seed;tnau_tomato_seed
+kcc0114,thrips,thrips attack in Tomato,tnau_tomato_pest_5,1,hit,False,tnau_tomato_pest_5;tnau_tomato_07;tnau_tomato_09
+kcc0115,damping-off,damping off in tomato,tnau_tomato_01,1,hit,False,tnau_tomato_01;tnau_tomato_01;tnau_tomato_cultural
+kcc0116,cultivation,farmer want to know information about what is the seed rate of potato,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_review;icar_indfarm_potato_2019
+kcc0117,late-blight,information regarding control of early and late blight in potato,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_potato_2019;tnau_potato_cultivation
+kcc0118,early-blight,Early blight in Tomato,tnau_tomato_02,1,hit,False,tnau_tomato_02;tnau_tomato_02;tnau_potato_02
+kcc0119,spotted-wilt,Tomato spotted wilt disease,tnau_tomato_07,1,hit,False,tnau_tomato_07;tnau_tomato_pest_5;tnau_tomato_05
+kcc0120,leaf-spot,tomato leaf spot,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_04;tnau_tomato_11;tnau_tomato_pest_5
+kcc0121,cultivation,Information regarding sowing time of Potato crop,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_potato_2019;tnau_potato_cultivation
+kcc0122,wilt,Wilting in potato,tnau_potato_06,2,hit,False,tnau_potato_03;tnau_potato_06;tnau_potato_04
+kcc0123,leaf-spot,Cercospora leaf spot in tomato,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_04;tnau_tomato_11;icar_indfarm_review
+kcc0124,varieties,ASKED ABOUT VARIETIES OF POTATO,tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;tnau_tomato_season_varieties;icar_indfarm_potato_2019
+kcc0125,varieties,VARIETIES OF POTATO ARE AS UNDER,tnau_potato_cultivation,7,ranked low (rank 6-20),False,icar_indfarm_review;icar_indfarm_potato_2019;tnau_potato_02
+kcc0126,blight,REGARDING BLIGHT IN POTATO,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,5,near miss (rank 4-5),False,icar_indfarm_review;icar_indfarm_review;icar_indfarm_potato_2019
+kcc0127,early-blight,Farmer wants to know information about How to control of Early Blight and Late Blight attack in tomato crop,tnau_tomato_02,19,ranked low (rank 6-20),True,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_review
+kcc0128,late-blight,information regarding control of late blight in potato,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,tnau_potato_cultivation;icar_indfarm_potato_2019;icar_indfarm_potato_2019
+kcc0129,mites,FARMER ASKING ABOUT ATTACK OF RED MITES ON TOMATO,tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_7;tnau_tomato_pest_3;tnau_tomato_pest_4
+kcc0130,whitefly,FARMER ASKED ABOUT ATTACK OF WHITE FLY ON TOMATO,tnau_tomato_pest_4,2,hit,True,icar_indfarm_potato_2019;tnau_tomato_pest_4;tnau_tomato_09
+kcc0131,mites,ask about tomato RED MITES,tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_7;tnau_tomato_11;tnau_tomato_09
+kcc0132,early-blight,Information regarding control of Late blight and Early blight in Potato crop,tnau_potato_02;tnau_potato_cultivation,2,hit,False,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_review
+kcc0133,early-blight,information regarding control of early blight in potato,tnau_potato_02;tnau_potato_cultivation,2,hit,False,icar_indfarm_potato_2019;tnau_potato_cultivation;tnau_potato_02
+kcc0134,leaf-curl,Leaf curling in Tomato,tnau_tomato_06,1,hit,False,tnau_tomato_06;tnau_tomato_pest_4;tnau_tomato_cultural
+kcc0135,blight,Blight in Potato,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,8,ranked low (rank 6-20),False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0136,rot,PROTECTION IN POINTED GOURD,tnau_potato_03;tnau_potato_07,14,ranked low (rank 6-20),False,tnau_potato_cultivation;tnau_potato_cultivation;icar_indfarm_potato_2019
+kcc0137,early-blight,Information regarding control of Late blight and Early blight in tomato crop,tnau_potato_02;tnau_potato_cultivation,2,hit,True,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_review
+kcc0138,mites,FARMER ASKED ABOUT Attack Red Mites ON TOMATO,tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_7;icar_indfarm_review;icar_indfarm_review
+kcc0139,mealybug,Regarding mealy bug in tomato,tnau_tomato_pest_6,1,hit,False,tnau_tomato_pest_6;tnau_tomato_pest_7;tnau_tomato_pest_5
+kcc0140,late-blight,Farmer want to information regarding late blight of tomato,tnau_tomato_08,8,ranked low (rank 6-20),True,icar_indfarm_potato_2019;icar_indfarm_review;icar_indfarm_review
+kcc0141,late-blight,INFORMATION REGARDING CONTROL OF EARLY AND LATE BLIGHT OF POTATO,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,icar_indfarm_review;icar_indfarm_potato_2019;tnau_potato_cultivation
+kcc0142,rot,Collar rot in Potato,tnau_potato_03;tnau_potato_07,1,hit,False,tnau_potato_07;tnau_potato_03;tnau_potato_03
+kcc0143,leaf-curl,Leaf Curling problem,tnau_tomato_06,1,hit,False,tnau_tomato_06;tnau_tomato_pest_4;icar_indfarm_review
+kcc0144,thrips,information regarding how to control thirps in bottle gourd,tnau_tomato_pest_5,2,hit,False,tnau_potato_cultivation;tnau_tomato_pest_5;icar_indfarm_review
+kcc0145,early-blight,Farmer need information regarding control measures of early blight of tomato crop,tnau_tomato_02,5,near miss (rank 4-5),True,icar_indfarm_potato_2019;tnau_potato_cultivation;icar_indfarm_potato_2019
+kcc0146,seed-nursery,Farmer wants to know information about How to control fungal attack in tomato seedling's,tnau_tomato_seed,2,hit,True,icar_indfarm_review;tnau_tomato_seed;icar_indfarm_review
+kcc0147,seed-nursery,seedling treatment in Tomato,tnau_tomato_seed,1,hit,False,tnau_tomato_seed;tnau_tomato_seed;tnau_tomato_01
+kcc0148,late-blight,LATE BLIGHT OF TOMATO,tnau_tomato_08,1,hit,False,tnau_tomato_08;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0149,rot,Root rot in potato plant,tnau_potato_03;tnau_potato_07,2,hit,False,tnau_potato_06;tnau_potato_03;tnau_potato_03
+kcc0150,whitefly,How to control white fly in tomato crop,tnau_tomato_pest_4,1,hit,False,tnau_tomato_pest_4;tnau_tomato_06;tnau_tomato_pest_3
+kcc0151,leaf-curl,upward curling of tomato leaves -,tnau_tomato_06,1,hit,False,tnau_tomato_06;tnau_tomato_pest_4;icar_indfarm_review
+kcc0152,leaf-spot,tomato leaf spot management,tnau_tomato_04;tnau_tomato_11,1,hit,False,tnau_tomato_04;tnau_tomato_11;tnau_tomato_pest_4
+kcc0153,early-blight,Information regarding control of early blight in Tomato crop,tnau_tomato_02,5,near miss (rank 4-5),True,icar_indfarm_potato_2019;tnau_potato_02;tnau_potato_cultivation
+kcc0154,leaf-curl,TOMATO LEAF CURL VIRUS ATTACK,tnau_tomato_06,3,hit,False,tnau_tomato_pest_4;tnau_tomato_pest_5;tnau_tomato_06
+kcc0155,powdery-mildew,POWDERY MILDEW IN TOMATO,tnau_tomato_10,1,hit,False,tnau_tomato_10;tnau_tomato_cultural;tnau_tomato_soil
+kcc0156,early-blight,farmer want to know information about How to control of early blight disease attack in tomato crop,tnau_tomato_02,6,ranked low (rank 6-20),True,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_potato_2019
+kcc0157,late-blight,Farmer wants information regarding control of Late Blight Disease in Tomato crop,tnau_tomato_08,19,ranked low (rank 6-20),True,icar_indfarm_review;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0158,wilt,FARMER ASKED ABOUT WILT IN PATATO,tnau_potato_06,12,ranked low (rank 6-20),False,icar_indfarm_review;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0159,irrigation,Farmer needs information regarding WATER MANAGEMENT in Tomato,tnau_tomato_irrigation,1,hit,False,tnau_tomato_irrigation;tnau_tomato_cultural;icar_indfarm_potato_2019
+kcc0160,seed-nursery,Farmer wants to know about seed rate of Tomato crop,tnau_tomato_seed,1,hit,False,tnau_tomato_seed;tnau_tomato_01;icar_indfarm_review
+kcc0161,thrips,Farmer wants to know information about control thrips in tomato crop,tnau_tomato_pest_5,1,hit,False,tnau_tomato_pest_5;tnau_tomato_07;tnau_tomato_pest_6
+kcc0162,thrips,FARMER ASKED ABOUT ATTACK OF THRIPS IN TOMATO CROP,tnau_tomato_pest_5,1,hit,False,tnau_tomato_pest_5;tnau_tomato_pest_1;tnau_tomato_pest_3
+kcc0163,rot,Root rot in potato,tnau_potato_03;tnau_potato_07,2,hit,False,tnau_potato_06;tnau_potato_03;tnau_potato_03
+kcc0164,thrips,Thrips in tomato,tnau_tomato_pest_5,1,hit,False,tnau_tomato_pest_5;tnau_tomato_07;tnau_tomato_09
+kcc0165,irrigation,Irrigation related information,tnau_tomato_irrigation,4,near miss (rank 4-5),False,icar_indfarm_review;tnau_tomato_09;icar_indfarm_potato_2019
+kcc0166,blight,FARMER ASKED ABOUT CONTROL BLIGHT ATTACK ON POTATO,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,7,ranked low (rank 6-20),False,icar_indfarm_potato_2019;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0167,blight,ASKED ABOUT BLIGHT ATTACK ON POTATO,tnau_potato_01;tnau_potato_02;tnau_potato_cultivation,6,ranked low (rank 6-20),False,icar_indfarm_review;icar_indfarm_review;icar_indfarm_potato_2019
+kcc0168,wilt,wilting in potato plant,tnau_potato_06,8,ranked low (rank 6-20),False,icar_indfarm_potato_2019;tnau_tomato_05;tnau_potato_03
+kcc0169,mites,FARMER NEED INFORMATION ABOUT CONTROL RED MITE ATTACK ON TOMATO CROP,tnau_tomato_pest_7,1,hit,False,tnau_tomato_pest_7;tnau_tomato_pest_4;tnau_tomato_pest_6
+kcc0170,irrigation,Water management in tomato,tnau_tomato_irrigation,8,ranked low (rank 6-20),False,tnau_tomato_01;tnau_tomato_03;tnau_tomato_cultural
+kcc0171,powdery-mildew,Downy mildew in watermelon,tnau_tomato_10,2,hit,False,icar_indfarm_review;tnau_tomato_10;tnau_tomato_11
+kcc0172,powdery-mildew,TOMATO SUCKING PEST+ POWDERY MILDEW,tnau_tomato_10,1,hit,False,tnau_tomato_10;tnau_tomato_cultural;tnau_tomato_seed
+kcc0173,mites,Mites in Chilli plant-,tnau_tomato_pest_7,10,ranked low (rank 6-20),False,tnau_tomato_irrigation;tnau_tomato_03;icar_indfarm_review
+kcc0174,soil,Protect the tomato seedlings from soil borne diseases,tnau_tomato_soil,1,hit,False,tnau_tomato_soil;tnau_tomato_01;tnau_tomato_seed
+kcc0175,late-blight,information regarding late blight in potato,tnau_potato_01;icar_indfarm_potato_2019;icar_indfarm_review;tnau_potato_cultivation,1,hit,False,icar_indfarm_review;icar_indfarm_potato_2019;icar_indfarm_review
+kcc0176,damping-off,Damping off in tomato nursery,tnau_tomato_01,1,hit,False,tnau_tomato_01;tnau_tomato_01;tnau_tomato_cultural
