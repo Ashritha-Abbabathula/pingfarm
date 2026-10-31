@@ -115,7 +115,9 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 - Small test sets: 39 text questions (machine-drafted Hindi/Telugu; check the wording with a native speaker), 153 real
   questions (English only, operator summaries) and 85 field photos.
 - The knowledge base has 41 documents but only 6 are Hindi or Telugu. Starter-set Hindi/Telugu retrieval fell after
-  it grew; a language-balanced search recovered it, but only 26 Hindi/Telugu questions measure that. Not yet fully sorted: which real-question misses are retrieval failures and which are gaps.
+  it grew; a language-balanced search recovered it, but only 26 Hindi/Telugu questions measure that.
+  Of the 38 real-question misses (of 153), the right page was in the top 20 every time, so they are ranking failures;
+  blight is the largest group and 10 had the wrong crop's page on top (`results/error_analysis.csv`).
 - The weather-risk, soil-fit and market features are screening rules from the documents, not validated forecasts;
   prices are not profit; there is no soil measurement.
 - PlantVillage may contain several photos of one leaf; its train/test split was not independently checked,
