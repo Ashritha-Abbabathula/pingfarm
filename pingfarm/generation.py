@@ -155,7 +155,10 @@ class GeminiAnswerer:
         import httpx
 
         self.client = client or httpx.Client(timeout=20)  # a farmer is waiting: give up on a slow model quickly
-        self.model = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
+        # one model name, or a comma list: when the first is overloaded the next is tried
+        names = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
+        self.models = [m.strip() for m in names.split(",") if m.strip()]
+        self.model = self.models[0]
         self.max_tokens = max_tokens
 
     def answer(self, question: str, hits: list[Hit], context: str = "") -> Answer:
@@ -164,15 +167,17 @@ class GeminiAnswerer:
         if context:
             user += f"Extra facts (weather/prices):\n{context}\n\n"
         user += f"Farmer's question: {question}"
-        resp = self.client.post(
-            self.URL.format(model=self.model),
-            headers={"x-goog-api-key": os.environ.get("GEMINI_API_KEY", "")},
-            json={
-                "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-                "contents": [{"role": "user", "parts": [{"text": user}]}],
-                "generationConfig": {"maxOutputTokens": self.max_tokens},
-            },
-        )
+        body = {
+            "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+            "contents": [{"role": "user", "parts": [{"text": user}]}],
+            "generationConfig": {"maxOutputTokens": self.max_tokens},
+        }
+        for i, name in enumerate(self.models):
+            resp = self.client.post(self.URL.format(model=name), headers={"x-goog-api-key": os.environ.get("GEMINI_API_KEY", "")}, json=body)
+            if resp.status_code in (404, 429, 500, 502, 503, 504) and i < len(self.models) - 1:
+                log.warning("Gemini model %s unavailable (HTTP %s): trying %s", name, resp.status_code, self.models[i + 1])
+                continue
+            break
         resp.raise_for_status()
         parts = resp.json()["candidates"][0].get("content", {}).get("parts", [])
         text = "".join(p.get("text", "") for p in parts)

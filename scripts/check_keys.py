@@ -6,6 +6,7 @@ Reads the same .env file as the app. Each check prints OK, SKIPPED (key not set)
 reason. The Anthropic check sends one tiny request (a fraction of a cent).
 """
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -36,28 +37,57 @@ def check_anthropic():
         return report("anthropic", False, f"{type(exc).__name__}: {str(exc)[:160]}")
 
 
+def _gemini_call(key, model, timeout):
+    """One tiny request. Returns (status code or None, short message)."""
+    try:
+        r = httpx.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+            headers={"x-goog-api-key": key},
+            json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
+            timeout=timeout,
+        )
+        if r.status_code == 200:
+            return 200, "answered"
+        return r.status_code, r.json().get("error", {}).get("message", "")[:120]
+    except httpx.TimeoutException:
+        return None, f"no answer within {timeout} s"
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {str(exc)[:100]}"
+
+
+def _gemini_candidates(key, tried):
+    """Text models this key may call, newest-looking first, skipping ones that are not for plain text."""
+    try:
+        r = httpx.get("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200",
+                      headers={"x-goog-api-key": key}, timeout=30)
+        models = r.json().get("models", [])
+    except Exception:
+        return []
+    names = [m["name"].split("/", 1)[1] for m in models
+             if "generateContent" in m.get("supportedGenerationMethods", []) and m["name"].startswith("models/gemini")]
+    names = [n for n in names if n not in tried and "flash" in n
+             and not re.search(r"tts|image|live|audio|embed|thinking|vision|robotics|computer", n)]
+    return sorted(names, reverse=True)[:5]
+
+
 def check_gemini():
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         return print("gemini       SKIPPED (GEMINI_API_KEY not set)") or None
-    model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
-    last = ""
-    for attempt in (1, 2):  # newer models can be slow to start: be patient, and try once more before failing
-        try:
-            r = httpx.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-                headers={"x-goog-api-key": key},
-                json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
-                timeout=40,
-            )
-            if r.status_code == 200:
-                return report("gemini", True, f"model {model} answered")
-            return report("gemini", False, f"HTTP {r.status_code}: {r.json().get('error', {}).get('message', '')[:160]}")
-        except httpx.TimeoutException as exc:
-            last = f"{type(exc).__name__}: no answer within 40 s (tried {attempt}x). The key and model name were accepted, so this is slowness or the network: run it again."
-        except Exception as exc:
-            return report("gemini", False, f"{type(exc).__name__}: {str(exc)[:160]}")
-    return report("gemini", False, last)
+    model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash").split(",")[0].strip()
+    code, msg = _gemini_call(key, model, 40)
+    if code == 200:
+        return report("gemini", True, f"model {model} answered")
+    print(f"gemini       {model}: HTTP {code or '-'} {msg}")
+    if code in (401, 403):
+        return report("gemini", False, "the key was refused: create a new key and check it is the one in .env")
+    print("gemini       looking for another model that works with your key...")
+    for other in _gemini_candidates(key, {model}):
+        code, msg = _gemini_call(key, other, 30)
+        print(f"gemini       {other}: {'OK' if code == 200 else f'HTTP {code or chr(45)} {msg}'}")
+        if code == 200:
+            return report("gemini", True, f"{other} works. Put PINGFARM_GEMINI_MODEL={other} (or a comma list: {other},{model}) in .env")
+    return report("gemini", False, "no model answered. If every line above says 503 or a timeout, Google is overloaded: try again later")
 
 
 def check_data_gov():

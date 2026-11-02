@@ -7,7 +7,7 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 
 > Status (version 2, branch `v2-wip`): retrieval, evaluation on real farmer questions, leaf-photo classifier,
 > learned topic gate and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets,
-> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (63 tests passing).
+> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (64 tests passing).
 > **Not done:** live tests of the language-model answerers (Gemini or Claude), live WhatsApp and price-API
 > connections (need your credentials), speech-to-text, and the farmer pilot.
 > See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md).
@@ -102,7 +102,7 @@ python -m venv <somewhere>/pingfarm-venv   # then activate it
 pip install -r requirements.txt
 python scripts/fetch_corpus.py              # downloads the source documents
 python scripts/build_starter_questions.py   # writes data/eval/questions.jsonl
-python -m pytest -q tests                   # 63 tests (about 2 minutes)
+python -m pytest -q tests                   # 64 tests (about 1 minute)
 python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quick skips the reranker)
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)

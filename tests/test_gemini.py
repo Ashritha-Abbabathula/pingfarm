@@ -66,3 +66,18 @@ def test_a_working_model_is_used_as_is(monkeypatch):
     ans = ResilientAnswerer(_answerer("Spray at 2.5 g per litre [1]."), sleep=lambda s: None).answer(
         "q", [_hit("Spray mancozeb at 2.5 g per litre.")])
     assert ans.text.startswith("Spray at 2.5 g")
+
+
+def test_next_model_is_tried_when_the_first_is_overloaded(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    seen = []
+
+    def handler(request):
+        seen.append(request.url.path)
+        if "model-a" in request.url.path:
+            return httpx.Response(503, json={"error": {"message": "high demand"}})
+        return httpx.Response(200, json={"candidates": [{"content": {"parts": [{"text": "Fine [1]."}]}}]})
+
+    answerer = GeminiAnswerer(model="model-a, model-b", client=httpx.Client(transport=httpx.MockTransport(handler)))
+    ans = answerer.answer("q", [_hit("Tomato text.")])
+    assert ans.text.startswith("Fine") and len(seen) == 2 and "model-a" in seen[0] and "model-b" in seen[1]
