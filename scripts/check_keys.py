@@ -48,7 +48,7 @@ def _gemini_call(key, model, timeout):
         )
         if r.status_code == 200:
             return 200, "answered"
-        return r.status_code, r.json().get("error", {}).get("message", "")[:120]
+        return r.status_code, r.json().get("error", {}).get("message", "")[:400]
     except httpx.TimeoutException:
         return None, f"no answer within {timeout} s"
     except Exception as exc:
@@ -67,6 +67,7 @@ def _gemini_candidates(key, tried):
              if "generateContent" in m.get("supportedGenerationMethods", []) and m["name"].startswith("models/gemini")]
     names = [n for n in names if n not in tried and "flash" in n
              and not re.search(r"tts|image|live|audio|embed|thinking|vision|robotics|computer", n)]
+    print("gemini       text models your key can see: " + ", ".join(sorted(names, reverse=True)))
     return sorted(names, reverse=True)[:5]
 
 
@@ -82,6 +83,7 @@ def check_gemini():
     if code in (401, 403):
         return report("gemini", False, "the key was refused: create a new key and check it is the one in .env")
     print("gemini       looking for another model that works with your key...")
+    print("gemini       (a timeout on a one-word request usually means Google is slow or overloaded; a 429 means a quota)")
     for other in _gemini_candidates(key, {model}):
         code, msg = _gemini_call(key, other, 30)
         print(f"gemini       {other}: {'OK' if code == 200 else f'HTTP {code or chr(45)} {msg}'}")
