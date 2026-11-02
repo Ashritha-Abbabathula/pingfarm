@@ -8,8 +8,9 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 > Status (version 2, branch `v2-wip`): retrieval, evaluation on real farmer questions, leaf-photo classifier,
 > learned topic gate and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets,
 > opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (64 tests passing).
-> **Not done:** live tests of the language-model answerers (Gemini or Claude), live WhatsApp and price-API
-> connections (need your credentials), speech-to-text, and the farmer pilot.
+> Gemini passed a one-request key check on 2026-11-02, but full replies written by it have not been reviewed yet.
+> **Not done:** live tests of the Claude answerer, live WhatsApp and price-API connections (need your credentials),
+> speech-to-text, and the farmer pilot.
 > See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md).
 
 ```
@@ -124,8 +125,10 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
   so the lab score is an upper bound.
 - The reranker lowers English real-question Hit@3 a little (see D36).
 - Romanised Hindi/Telugu ("mera tamatar ka bhav") intent detection is only partly handled (about 79% on a small set).
-- The price and markets tools were tested on recorded sample data only; WhatsApp and the Gemini/Claude answerers were
-  not exercised live. WhatsApp alert templates still need Meta's approval.
+- The price and markets tools were tested on recorded sample data only; WhatsApp and the Claude answerer were not
+  exercised live. Gemini answered a one-word key check; real farmer-style replies from it were not reviewed yet.
+  Google's Gemini service was overloaded or slow for a few hours before that (503 and timeouts), which is why the
+  app retries once and then quotes the sources. WhatsApp alert templates still need Meta's approval.
 - The Hindi/Telugu topic gate is only about as good as the old gate.
 
 ## How this was built
