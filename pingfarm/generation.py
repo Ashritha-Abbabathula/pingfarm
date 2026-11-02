@@ -147,7 +147,7 @@ class GeminiAnswerer:
 
     URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
-    def __init__(self, model: str | None = None, client=None, max_tokens: int = 500):
+    def __init__(self, model: str | None = None, client=None, max_tokens: int = 1500):  # headroom: newer models count their thinking in this limit
         import httpx
 
         self.client = client or httpx.Client(timeout=60)

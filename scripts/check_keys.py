@@ -41,18 +41,23 @@ def check_gemini():
     if not key:
         return print("gemini       SKIPPED (GEMINI_API_KEY not set)") or None
     model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
-    try:
-        r = httpx.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-            headers={"x-goog-api-key": key},
-            json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
-            timeout=30,
-        )
-        if r.status_code == 200:
-            return report("gemini", True, f"model {model} answered")
-        return report("gemini", False, f"HTTP {r.status_code}: {r.json().get('error', {}).get('message', '')[:160]}")
-    except Exception as exc:
-        return report("gemini", False, f"{type(exc).__name__}: {str(exc)[:160]}")
+    last = ""
+    for attempt in (1, 2):  # newer models can be slow to start: be patient, and try once more before failing
+        try:
+            r = httpx.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+                headers={"x-goog-api-key": key},
+                json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
+                timeout=90,
+            )
+            if r.status_code == 200:
+                return report("gemini", True, f"model {model} answered")
+            return report("gemini", False, f"HTTP {r.status_code}: {r.json().get('error', {}).get('message', '')[:160]}")
+        except httpx.TimeoutException as exc:
+            last = f"{type(exc).__name__}: no answer within 90 s (tried {attempt}x). The key and model name were accepted, so this is slowness or the network: run it again."
+        except Exception as exc:
+            return report("gemini", False, f"{type(exc).__name__}: {str(exc)[:160]}")
+    return report("gemini", False, last)
 
 
 def check_data_gov():
