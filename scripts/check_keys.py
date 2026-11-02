@@ -40,7 +40,7 @@ def check_gemini():
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         return print("gemini       SKIPPED (GEMINI_API_KEY not set)") or None
-    model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-2.5-flash")
+    model = os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
     try:
         r = httpx.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",

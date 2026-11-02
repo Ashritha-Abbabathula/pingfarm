@@ -151,7 +151,7 @@ class GeminiAnswerer:
         import httpx
 
         self.client = client or httpx.Client(timeout=60)
-        self.model = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
         self.max_tokens = max_tokens
 
     def answer(self, question: str, hits: list[Hit], context: str = "") -> Answer:
