@@ -16,3 +16,6 @@ results/retrieval_quick.csv
 data/kcc/
 !models/topic_gate.json
 !models/intents.json
+.env.*
+!.env.example
+*.env.txt
