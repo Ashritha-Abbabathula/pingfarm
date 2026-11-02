@@ -9,11 +9,15 @@ Answerers share one interface (GeminiAnswerer is the same idea as ClaudeAnswerer
 Whichever one writes the answer, `dose_guard` then checks it. This is Decision D9:
 NEVER state a pesticide dose that is not written in a retrieved source.
 """
+import logging
 import os
 import re
+import time
 from dataclasses import dataclass
 
 from .rag.search import Hit
+
+log = logging.getLogger(__name__)
 
 REFUSAL = ("I am not sure about the exact amount to use. Please check the label on the product or ask your "
            "local agriculture officer (Krishi Vigyan Kendra) before spraying.")
@@ -176,10 +180,46 @@ class GeminiAnswerer:
         return Answer(safe, sources_from(hits), triggered)
 
 
+def _worth_retrying(exc: Exception) -> bool:
+    """Timeouts and overloaded/rate-limited servers are temporary; a wrong key or a bad request is not."""
+    status = getattr(getattr(exc, "response", None), "status_code", None) or getattr(exc, "status_code", None)
+    if status is not None:
+        return status in (408, 429, 500, 502, 503, 504, 529)
+    return True  # no status: a timeout or a dropped connection
+
+
+class ResilientAnswerer:
+    """Wraps a language-model answerer so an outage never becomes an error for the farmer.
+
+    Temporary failures are retried a couple of times; if the model still cannot answer, the reply quotes the
+    sources instead (ExtractiveAnswerer), which needs no AI at all. The dose guard runs on both paths."""
+
+    def __init__(self, primary, fallback=None, retries: int = 2, wait: float = 2.0, sleep=time.sleep):
+        self.primary = primary
+        self.fallback = fallback or ExtractiveAnswerer()
+        self.retries, self.wait, self.sleep = retries, wait, sleep
+
+    @property
+    def label(self) -> str:
+        return f"{type(self.primary).__name__} (quotes the sources if it is unavailable)"
+
+    def answer(self, question: str, hits: list[Hit], context: str = "") -> Answer:
+        for attempt in range(self.retries + 1):
+            try:
+                return self.primary.answer(question, hits, context)
+            except Exception as exc:
+                log.warning("%s failed (attempt %d): %s: %s", type(self.primary).__name__, attempt + 1, type(exc).__name__, exc)
+                if attempt == self.retries or not _worth_retrying(exc):
+                    break
+                self.sleep(self.wait * (attempt + 1))
+        return self.fallback.answer(question, hits, context)
+
+
 def default_answerer():
-    """Gemini if its key is set, else Claude if its key is set, otherwise the extractive fallback."""
+    """Gemini if its key is set, else Claude if its key is set, otherwise the extractive fallback.
+    A model answerer is wrapped so that an outage falls back to quoting the sources."""
     if os.environ.get("GEMINI_API_KEY"):
-        return GeminiAnswerer()
+        return ResilientAnswerer(GeminiAnswerer())
     if os.environ.get("ANTHROPIC_API_KEY"):
-        return ClaudeAnswerer()
+        return ResilientAnswerer(ClaudeAnswerer())
     return ExtractiveAnswerer()

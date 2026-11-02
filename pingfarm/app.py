@@ -76,7 +76,7 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
         a = app.state.agent
         return {"ok": True, "agent_loaded": a is not None,
                 "photo_diagnosis": bool(a and a.classifier),
-                "llm": type(a.answerer).__name__ if a else None,
+                "llm": (getattr(a.answerer, "label", None) or type(a.answerer).__name__) if a else None,
                 "whatsapp_dry_run": app.state.wa.dry_run}
 
     @app.post("/ask")

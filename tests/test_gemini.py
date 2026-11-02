@@ -30,4 +30,39 @@ def test_default_answerer_prefers_gemini_then_falls_back(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     assert isinstance(default_answerer(), ExtractiveAnswerer)
     monkeypatch.setenv("GEMINI_API_KEY", "test-key")
-    assert isinstance(default_answerer(), GeminiAnswerer)
+    chosen = default_answerer()
+    assert type(chosen).__name__ == "ResilientAnswerer" and isinstance(chosen.primary, GeminiAnswerer)
+
+
+def _failing(status):
+    def handler(request):
+        return httpx.Response(status, json={"error": {"message": "x"}})
+
+    return GeminiAnswerer(client=httpx.Client(transport=httpx.MockTransport(handler)))
+
+
+def test_outage_falls_back_to_quoting_the_sources_after_retries():
+    from pingfarm.generation import ResilientAnswerer
+
+    naps = []
+    answerer = ResilientAnswerer(_failing(503), retries=2, sleep=naps.append)
+    ans = answerer.answer("q", [_hit("Spray mancozeb at 2.5 g per litre.")])
+    assert "trusted sources say" in ans.text and ans.sources  # quoted the source instead of failing
+    assert len(naps) == 2  # tried 3 times in all, waiting between tries
+
+
+def test_a_wrong_key_is_not_retried():
+    from pingfarm.generation import ResilientAnswerer
+
+    naps = []
+    ans = ResilientAnswerer(_failing(403), retries=2, sleep=naps.append).answer("q", [_hit("Tomato text.")])
+    assert naps == [] and "trusted sources say" in ans.text
+
+
+def test_a_working_model_is_used_as_is(monkeypatch):
+    from pingfarm.generation import ResilientAnswerer
+
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    ans = ResilientAnswerer(_answerer("Spray at 2.5 g per litre [1]."), sleep=lambda s: None).answer(
+        "q", [_hit("Spray mancozeb at 2.5 g per litre.")])
+    assert ans.text.startswith("Spray at 2.5 g")
