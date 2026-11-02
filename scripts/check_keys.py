@@ -48,13 +48,13 @@ def check_gemini():
                 f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                 headers={"x-goog-api-key": key},
                 json={"contents": [{"parts": [{"text": "Reply with the word ready."}]}]},
-                timeout=90,
+                timeout=40,
             )
             if r.status_code == 200:
                 return report("gemini", True, f"model {model} answered")
             return report("gemini", False, f"HTTP {r.status_code}: {r.json().get('error', {}).get('message', '')[:160]}")
         except httpx.TimeoutException as exc:
-            last = f"{type(exc).__name__}: no answer within 90 s (tried {attempt}x). The key and model name were accepted, so this is slowness or the network: run it again."
+            last = f"{type(exc).__name__}: no answer within 40 s (tried {attempt}x). The key and model name were accepted, so this is slowness or the network: run it again."
         except Exception as exc:
             return report("gemini", False, f"{type(exc).__name__}: {str(exc)[:160]}")
     return report("gemini", False, last)

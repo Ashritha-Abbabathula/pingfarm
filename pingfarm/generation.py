@@ -154,7 +154,7 @@ class GeminiAnswerer:
     def __init__(self, model: str | None = None, client=None, max_tokens: int = 1500):  # headroom: newer models count their thinking in this limit
         import httpx
 
-        self.client = client or httpx.Client(timeout=60)
+        self.client = client or httpx.Client(timeout=20)  # a farmer is waiting: give up on a slow model quickly
         self.model = model or os.environ.get("PINGFARM_GEMINI_MODEL", "gemini-3.8-flash")
         self.max_tokens = max_tokens
 
@@ -191,10 +191,10 @@ def _worth_retrying(exc: Exception) -> bool:
 class ResilientAnswerer:
     """Wraps a language-model answerer so an outage never becomes an error for the farmer.
 
-    Temporary failures are retried a couple of times; if the model still cannot answer, the reply quotes the
+    Temporary failures are retried once; if the model still cannot answer, the reply quotes the
     sources instead (ExtractiveAnswerer), which needs no AI at all. The dose guard runs on both paths."""
 
-    def __init__(self, primary, fallback=None, retries: int = 2, wait: float = 2.0, sleep=time.sleep):
+    def __init__(self, primary, fallback=None, retries: int = 1, wait: float = 1.0, sleep=time.sleep):  # worst case about 45 s, then the sources are quoted
         self.primary = primary
         self.fallback = fallback or ExtractiveAnswerer()
         self.retries, self.wait, self.sleep = retries, wait, sleep
