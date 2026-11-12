@@ -7,7 +7,7 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 
 > Status (version 2, branch `v2-wip`): retrieval, evaluation on real farmer questions, leaf-photo classifier,
 > learned topic gate and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets,
-> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (64 tests passing).
+> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (71 tests passing).
 > Gemini passed a one-request key check on 2026-11-02, but full replies written by it have not been reviewed yet.
 > **Not done:** live tests of the Claude answerer, live WhatsApp and price-API connections (need your credentials),
 > speech-to-text, and the farmer pilot.
@@ -103,7 +103,7 @@ python -m venv <somewhere>/pingfarm-venv   # then activate it
 pip install -r requirements.txt
 python scripts/fetch_corpus.py              # downloads the source documents
 python scripts/build_starter_questions.py   # writes data/eval/questions.jsonl
-python -m pytest -q tests                   # 64 tests (about 1 minute)
+python -m pytest -q tests                   # 71 tests (about 1 minute)
 python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quick skips the reranker)
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)
@@ -132,6 +132,11 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
   Google's Gemini service was overloaded or slow for a few hours before that (503 and timeouts), which is why the
   app retries once and then quotes the sources. WhatsApp alert templates still need Meta's approval.
 - The Hindi/Telugu topic gate is only about as good as the old gate.
+- The Hindi Vikaspedia tomato page contains a typo in a pesticide name ("रोगी" where a brand name is meant); replies
+  quote it faithfully. The dose guard checks amounts and units, not product names. Have a native speaker or an
+  agronomist read the Hindi and Telugu replies before any pilot.
+- Found by an end-to-end test on 2026-11-13: "how much mancozeb per litre" was routed to prices (fixed, D40). Other
+  phrasings may still be misrouted: the router is about 90% on real questions, not perfect.
 
 ## How this was built
 PingFarm was built as a learning project with Claude (an AI assistant) writing most of the code, tests, notebooks
