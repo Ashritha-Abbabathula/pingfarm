@@ -1,26 +1,26 @@
 {
   "romanised (24)": {
-    "centroid": 0.833,
-    "trained": 0.792
+    "centroid": 0.708,
+    "trained": 0.75
   },
   "outlook (10)": {
-    "centroid": 0.8,
-    "trained": 0.8
+    "centroid": 0.9,
+    "trained": 0.9
   },
   "off_topic OOS (30)": {
-    "centroid": 0.233,
+    "centroid": 0.2,
     "trained": 0.9
   },
   "starter advice en/hi/te (39)": {
-    "centroid": 0.923,
-    "trained": 0.872
+    "centroid": 0.949,
+    "trained": 0.923
   },
   "KCC held-out (n=202)": {
-    "centroid": 0.634,
-    "trained": 0.901
+    "centroid": 0.619,
+    "trained": 0.906
   },
   "KCC held-out per class (trained)": {
-    "advice": 0.886,
+    "advice": 0.9,
     "outlook": 0.818,
     "other": 0.943,
     "price": 1.0

@@ -66,6 +66,15 @@ EXAMPLES_V2 = {
         "leaf curl control in tomato",
         "how to control blight in potato",
         "tomato wilt management",
+        # dose and quantity questions are advice, not price ("how much" must not mean "how much does it cost")
+        "How much mancozeb should I mix per litre of water?",
+        "What is the dose of fungicide for potato late blight?",
+        "How much spray should I use per acre for whitefly in tomato?",
+        "टमाटर में कितनी मात्रा में दवा डालनी चाहिए?",
+        "आलू के झुलसा रोग में प्रति लीटर पानी में कितना मैन्कोजेब मिलाएं?",
+        "టమాటాలో ఎంత మోతాదులో మందు వాడాలి?",
+        "bimari ke liye dawai kitni matra mein dalni chahiye",
+        "tamata ki dawa ka dose kitna hai",
     ],
 }
 
