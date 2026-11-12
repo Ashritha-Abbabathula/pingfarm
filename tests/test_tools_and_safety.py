@@ -107,7 +107,15 @@ def test_signature_check():
     assert verify_signature(body, good, secret)
     assert not verify_signature(body, "sha256=deadbeef", secret)
     assert not verify_signature(body, None, secret)
-    assert verify_signature(body, None, None)  # local dev: no secret configured
+    assert not verify_signature(body, None, None)  # no secret configured: fail closed
+
+
+def test_unsigned_requests_only_allowed_when_explicitly_enabled(monkeypatch):
+    monkeypatch.delenv("PINGFARM_ALLOW_UNSIGNED", raising=False)
+    assert not verify_signature(b"{}", None, None)
+    monkeypatch.setenv("PINGFARM_ALLOW_UNSIGNED", "1")
+    assert verify_signature(b"{}", None, None)
+    assert not verify_signature(b"{}", None, "s3cret")  # a configured secret is always enforced
 
 
 def test_dry_run_client_never_calls_network():

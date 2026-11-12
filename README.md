@@ -132,6 +132,8 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
   Google's Gemini service was overloaded or slow for a few hours before that (503 and timeouts), which is why the
   app retries once and then quotes the sources. WhatsApp alert templates still need Meta's approval.
 - The Hindi/Telugu topic gate is only about as good as the old gate.
+- The WhatsApp webhook rejects every request unless `WHATSAPP_APP_SECRET` is set (it used to accept unsigned requests when
+  no secret was set; found while preparing a public tunnel). Local development without a secret needs `PINGFARM_ALLOW_UNSIGNED=1`.
 - The Hindi Vikaspedia tomato page contains a typo in a pesticide name ("रोगी" where a brand name is meant); replies
   quote it faithfully. The dose guard checks amounts and units, not product names. Have a native speaker or an
   agronomist read the Hindi and Telugu replies before any pilot.

@@ -3,12 +3,12 @@
     WHATSAPP_TOKEN         access token
     WHATSAPP_PHONE_ID      the sending phone-number id
     WHATSAPP_VERIFY_TOKEN  a string YOU choose; Meta echoes it when you register the webhook
-    WHATSAPP_APP_SECRET    (recommended) lets us verify each request really came from Meta
+    WHATSAPP_APP_SECRET    required: lets us verify each request really came from Meta (no secret = every request rejected)
 
 Gotchas this module handles:
   * Meta retries slow webhooks -> the caller de-duplicates by message id (state.first_time_seeing)
   * photos/voice notes arrive as an id; you must call the API twice, with your token, to get the bytes
-  * every webhook request is signed; we reject unsigned or wrongly signed ones when an app secret is set
+  * every webhook request is signed; we reject unsigned or wrongly signed ones (and all of them if no app secret is set)
 """
 import hashlib
 import hmac
@@ -31,9 +31,12 @@ class Incoming:
 
 
 def verify_signature(raw_body: bytes, header: str | None, app_secret: str | None) -> bool:
-    """True if the request is signed correctly (or if no secret is configured, e.g. local dev)."""
+    """True only if the request is signed correctly.
+
+    With no app secret configured every request is REJECTED, because anyone who finds a public webhook address
+    could otherwise post fake messages. For local development only, set PINGFARM_ALLOW_UNSIGNED=1."""
     if not app_secret:
-        return True
+        return os.environ.get("PINGFARM_ALLOW_UNSIGNED") == "1"
     if not header or not header.startswith("sha256="):
         return False
     expected = hmac.new(app_secret.encode(), raw_body, hashlib.sha256).hexdigest()

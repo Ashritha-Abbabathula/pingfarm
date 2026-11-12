@@ -100,8 +100,10 @@ def test_unsure_photo_asks_for_better_photo(parts):
     assert r.abstained and "photo" in r.text.lower()
 
 
-def test_webhook_dedupes_and_replies(parts):
+def test_webhook_dedupes_and_replies(parts, monkeypatch):
     from fastapi.testclient import TestClient
+
+    monkeypatch.setenv("PINGFARM_ALLOW_UNSIGNED", "1")  # this test posts without a Meta signature
 
     from pingfarm.app import create_app
     from pingfarm.whatsapp import WhatsAppClient

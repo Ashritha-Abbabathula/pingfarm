@@ -67,7 +67,7 @@ You need a normal Facebook account. The **test number** is free and enough for a
 2. **Temporary access token**. It expires in about 24 hours, which is fine for a first test. Put in `.env` as `WHATSAPP_TOKEN=...`.
 3. Under **To**, add your own phone as a recipient and enter the code WhatsApp sends you. The test number can message only recipients you add here (a handful).
 4. **App secret**: **App settings**, **Basic**, **Show** next to App Secret. Put in `.env` as `WHATSAPP_APP_SECRET=...`.
-5. Choose any random string for `WHATSAPP_VERIFY_TOKEN` (for example 20 random letters). You will type the same string into Meta in step D.
+5. **Change `WHATSAPP_VERIFY_TOKEN` from the template's placeholder** and choose any random string for it (for example 20 random letters). You will type the same string into Meta in step D.
 
 Run `python scripts/check_keys.py`: `whatsapp OK` shows the test number if the token and phone id are right.
 
