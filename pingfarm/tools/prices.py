@@ -38,7 +38,7 @@ def fetch_prices(commodity: str, state: str | None = None, api_key: str | None =
     if state:
         params["filters[state]"] = state
     own = client is None
-    client = client or httpx.Client(timeout=20)
+    client = client or httpx.Client(timeout=40)  # the government API is often slow
     try:
         rows = client.get(URL, params=params).raise_for_status().json().get("records", [])
     finally:
