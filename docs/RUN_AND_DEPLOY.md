@@ -100,6 +100,22 @@ uvicorn pingfarm.app:app --reload        # chat page at http://127.0.0.1:8000
 `http://127.0.0.1:8000/health` shows which parts are switched on (`llm`, `photo_diagnosis`, `whatsapp_dry_run`).
 `whatsapp_dry_run: false` means real sending is on.
 
+## Meta gotchas found on the first live run (2026-11-13)
+
+Meta's setup screens show green ticks even when the bot is not yet receiving anything. Three things were missing:
+
+1. **Publish the app.** While it is unpublished, Meta only shows messages in its own dashboard and does not send real ones to
+   your webhook. The Publish page needs a privacy policy URL: the app serves one at `/privacy` (set
+   `PINGFARM_CONTACT_EMAIL` if you want a contact line on it). Put `https://<your-address>/privacy` under App settings, Basic.
+2. **Subscribe the app to the WhatsApp account.** Check with `GET https://graph.facebook.com/v25.0/<WABA id>/subscribed_apps`
+   (the WABA id is the "Messaging account ID" on Step 1 Try it out). If PingFarm is not listed, `POST` to the same URL.
+3. **Switch on the `messages` field.** Check with `GET https://graph.facebook.com/v25.0/<app id>/subscriptions` using the app
+   access token (`<app id>|<app secret>`). If `fields` is empty, `POST` `object=whatsapp_business_account`, your `callback_url`,
+   your `verify_token` and `fields=messages` to the same URL.
+
+Then message the test number from a phone that is on the recipient list. The first reply after the app starts is slow
+(about 3 minutes on a laptop CPU) because the models load on the first message.
+
 ## Troubleshooting
 - **Webhook verification fails:** the app is not running, the tunnel address changed (free tunnels change on restart), or the verify token differs by one character.
 - **No reply on WhatsApp:** check you added your phone as a recipient, the token has not expired (24 h), and the terminal running `uvicorn` for errors.
