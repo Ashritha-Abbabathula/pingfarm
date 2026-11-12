@@ -146,3 +146,16 @@ def test_guard_catches_hindi_and_telugu_doses():
     # the SAME dose written in another script/unit as the source is allowed
     safe, triggered = dose_guard("प्रति एकड़ १००० ग्राम छिड़कें।", passages)
     assert not triggered
+
+
+def test_privacy_page_is_public_and_shows_no_personal_contact_by_default(monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from pingfarm.app import create_app
+
+    monkeypatch.delenv("PINGFARM_CONTACT_EMAIL", raising=False)
+    client = TestClient(create_app(agent=object(), wa=WhatsAppClient()))
+    page = client.get("/privacy")
+    assert page.status_code == 200 and "delete my data" in page.text and "@" not in page.text
+    monkeypatch.setenv("PINGFARM_CONTACT_EMAIL", "me@example.org")
+    assert "me@example.org" in client.get("/privacy").text

@@ -5,6 +5,7 @@
 Endpoints
     GET  /                 a simple chat page (demo without WhatsApp)
     GET  /health           is it alive, and which parts are switched on
+    GET  /privacy          the privacy policy page (Meta needs a public URL for it)
     POST /ask              JSON {user_id, text, lat, lon}  -> reply   (for testing)
     POST /ask/photo        multipart photo upload          -> reply
     GET  /webhook          Meta's verification handshake
@@ -19,6 +20,7 @@ from pydantic import BaseModel
 
 from .agent import Agent
 from .generation import default_answerer
+from .privacy import privacy_html
 from .rag.chunking import chunk_all
 from .rag.documents import load_documents
 from .rag.embed import Embedder
@@ -110,6 +112,10 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
         for msg in parse_incoming(await request.json()):
             background.add_task(process_message, app, msg)
         return {"status": "received"}
+
+    @app.get("/privacy", response_class=HTMLResponse)
+    def privacy():
+        return privacy_html()
 
     @app.get("/", response_class=HTMLResponse)
     def home():
