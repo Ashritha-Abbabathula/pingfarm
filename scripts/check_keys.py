@@ -100,11 +100,12 @@ def check_data_gov():
         sys.path.insert(0, str(ROOT))
         from pingfarm.tools.prices import describe_prices, fetch_prices
 
+        patient = httpx.Client(timeout=60)  # the check can wait much longer than the app does
         try:
-            recs = fetch_prices("Tomato", api_key=key)
+            recs = fetch_prices("Tomato", api_key=key, client=patient)
         except httpx.TimeoutException:  # this government API is often slow: try once more
             print("data.gov.in  slow to answer, trying once more...")
-            recs = fetch_prices("Tomato", api_key=key)
+            recs = fetch_prices("Tomato", api_key=key, client=patient)
         if not recs:
             return report("data.gov.in", False, "key accepted but no Tomato rows came back (field names or filters may need adjusting)")
         return report("data.gov.in", True, f"{len(recs)} rows. Example: {describe_prices(recs, 'tomato')[:140]}")

@@ -127,6 +127,8 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 - Romanised Hindi/Telugu ("mera tamatar ka bhav") intent detection is only partly handled (about 79% on a small set).
 - The price and markets tools were tested on recorded sample data only; WhatsApp and the Claude answerer were not
   exercised live. Gemini answered a one-word key check; real farmer-style replies from it were not reviewed yet.
+  data.gov.in: the key is accepted, but on 2026-11-13 every price query (even one row) timed out at 60 s, so
+  live prices are unconfirmed (the server answers instantly without a key, so it is the query backend, not the network).
   Google's Gemini service was overloaded or slow for a few hours before that (503 and timeouts), which is why the
   app retries once and then quotes the sources. WhatsApp alert templates still need Meta's approval.
 - The Hindi/Telugu topic gate is only about as good as the old gate.
