@@ -142,7 +142,6 @@ class IntentClassifier:
     Why: with five intents including an open-ended "other", averaging examples into centroids was too blurry
     (see results/intents.json vs results/intents_v3.json). A trained classifier learns where the boundaries are.
     """
-    PATH = None
 
     def __init__(self, names, W, b):
         self.names, self.W, self.b = list(names), np.asarray(W, dtype="float32"), np.asarray(b, dtype="float32")

@@ -12,7 +12,6 @@ We keep the sample out of git (data/kcc/). Run:  python scripts/fetch_kcc_sample
 Writes data/kcc/tomato_potato.csv (target crops) and data/kcc/other_crops.csv (negatives for the topic gate).
 """
 import argparse
-import re
 import time
 from pathlib import Path
 

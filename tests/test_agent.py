@@ -184,3 +184,37 @@ def test_delete_my_data(parts):
 
 def test_romanised_price_question_is_a_price_intent(parts):
     assert make_agent(parts).detect_intent("aaj tamatar ka mandi bhav kya hai") == "price"
+
+
+def test_a_place_typed_as_words_works_like_a_location_pin(parts):
+    """Telegram (and plain web chat) users can type where they are; no location pin is needed."""
+    a = make_agent(parts)
+    a.geocode_fn = lambda name, state, cache: (19.99, 73.79) if name.lower() == "nashik" else None
+    first = a.handle("tg1", text="Can I spray tomorrow or will it rain?")
+    assert "village or town" in first.text and "WhatsApp" not in first.text
+    saved = a.handle("tg1", text="Nashik, Maharashtra")                      # a plain reply right after we asked
+    assert "Nashik, Maharashtra" in saved.text
+    assert a.state.get_user("tg1").lat == 19.99
+    again = a.handle("tg1", text="Can I spray tomorrow or will it rain?")
+    assert again.sources and again.sources[0]["doc_id"] == "open-meteo"      # now answered from the forecast
+
+
+def test_unknown_place_is_asked_again_and_ordinary_questions_are_not_taken_for_places(parts):
+    a = make_agent(parts)
+    a.geocode_fn = lambda name, state, cache: None
+    a.handle("tg2", text="Can I spray tomorrow or will it rain?")
+    r = a.handle("tg2", text="I live in Nowhereville")
+    assert "could not find" in r.text and a.state.get_user("tg2").lat is None
+    b = make_agent(parts)
+    b.geocode_fn = lambda *args: (_ for _ in ()).throw(AssertionError("must not geocode a question"))
+    assert b.handle("tg3", text="How do I control leaf curl virus in tomato?").sources  # never treated as a place
+
+
+def test_parse_place_phrases():
+    from pingfarm.profile import parse_place
+
+    assert parse_place("I live in Nashik, Maharashtra") == ("Nashik", "Maharashtra")
+    assert parse_place("my village is Kothur") == ("Kothur", None)
+    assert parse_place("Nashik", awaiting=False) is None                      # a bare word is not a place unless we asked
+    assert parse_place("Nashik", awaiting=True) == ("Nashik", None)
+    assert parse_place("how much per litre?", awaiting=True) is None          # a question is never a place

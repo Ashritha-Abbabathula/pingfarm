@@ -5,11 +5,13 @@ sourced advice from trusted agriculture documents (ICAR, TNAU, Vikaspedia). What
 
 Scope: **tomato and potato** (diseases, pests, cultivation); questions in **English, Hindi, Telugu**.
 
-> Status (version 2, branch `v2-wip`): retrieval, evaluation on real farmer questions, leaf-photo classifier,
-> learned topic gate and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets,
-> opt-in alerts, agent, safety guard and WhatsApp/web service are built and tested (71 tests passing).
-> Gemini passed a one-request key check on 2026-11-02, but full replies written by it have not been reviewed yet.
-> **Not done:** live tests of the Claude answerer, live WhatsApp and price-API connections (need your credentials),
+> Status (version 2): retrieval, evaluation on real farmer questions, leaf-photo classifier, learned topic gate
+> and intent router, farmer profile, weather-risk outlook, soil/weather fit, nearby markets, opt-in alerts, agent,
+> safety guard and the web service are built and tested (87 tests passing). **Live on a real phone through a
+> Telegram bot** (2026-11-13), with Gemini writing the replies. WhatsApp (Meta Cloud API and Twilio sandbox) is built
+> and tested but did not reach a phone: Meta needs business verification and Twilio's sandbox webhook setting was
+> unreachable for this account.
+> **Not done:** live tests of the Claude answerer, live mandi prices (the data.gov.in server timed out),
 > speech-to-text, and the farmer pilot.
 > See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md). What failed along the way, and why: [docs/WHAT_WENT_WRONG.md](docs/WHAT_WENT_WRONG.md).
 
@@ -85,7 +87,8 @@ slightly lower on small hand-written romanised Hindi/Telugu sets (83% to 79%).
 | Learned topic gate and trained intent router | `pingfarm/topic_gate.py`, `pingfarm/intents.py`, `scripts/train_topic_gate.py`, `scripts/train_intents.py` |
 | Farmer profile (soil, planting date, alerts, delete data) | `pingfarm/profile.py` |
 | Weather risk outlook, soil/weather fit, nearby markets | `pingfarm/tools/risk.py`, `suitability.py`, `markets.py` |
-| WhatsApp through Twilio's sandbox (no business verification) | `pingfarm/twilio_channel.py`, `POST /twilio` |
+| Telegram bot (long polling, live) | `pingfarm/telegram_channel.py` |
+| WhatsApp through Twilio's sandbox (built and tested; sandbox webhook unreachable for this account) | `pingfarm/twilio_channel.py`, `POST /twilio` |
 | Opt-in alerts (24-hour WhatsApp rule) | `pingfarm/alerts.py`, `scripts/run_alerts.py` |
 | Real farmer questions (KCC open data) | `scripts/fetch_kcc_sample.py`, `scripts/build_real_questions.py` |
 | SQLite state, message de-duplication | `pingfarm/state.py` |
@@ -104,7 +107,7 @@ python -m venv <somewhere>/pingfarm-venv   # then activate it
 pip install -r requirements.txt
 python scripts/fetch_corpus.py              # downloads the source documents
 python scripts/build_starter_questions.py   # writes data/eval/questions.jsonl
-python -m pytest -q tests                   # 79 tests (about 1 minute)
+python -m pytest -q tests                   # 87 tests (about 1 minute)
 python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quick skips the reranker)
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)
@@ -127,7 +130,8 @@ uvicorn pingfarm.app:app --reload           # chat page at http://127.0.0.1:8000
 - The reranker lowers English real-question Hit@3 a little (see D36).
 - Romanised Hindi/Telugu ("mera tamatar ka bhav") intent detection is only partly handled (about 79% on a small set).
 - The price and markets tools were tested on recorded sample data only; WhatsApp and the Claude answerer were not
-  exercised live. Gemini answered a one-word key check; real farmer-style replies from it were not reviewed yet.
+  exercised live. Gemini replies were checked end to end (web page, Telegram) on 2026-11-13, but a native speaker
+  should still read the Hindi and Telugu ones.
   data.gov.in: the key is accepted, but on 2026-11-13 every price query (even one row) timed out at 60 s, so
   live prices are unconfirmed (the server answers instantly without a key, so it is the query backend, not the network).
   Google's Gemini service was overloaded or slow for a few hours before that (503 and timeouts), which is why the

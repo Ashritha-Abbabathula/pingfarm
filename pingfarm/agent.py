@@ -10,18 +10,16 @@ A deliberately small loop (no agent framework) so every step can be read and exp
     6. write the answer       -> language model or extractive, then the dose safety guard
     7. reply with sources
 
-Intent detection uses the SAME multilingual embedder as retrieval: we embed a few example
-questions per intent (English, Hindi, Telugu) and pick the nearest. No extra model, easy to explain.
+Intent detection uses the SAME multilingual embedder as retrieval: a small trained classifier (logistic
+regression on the question embedding) picks the intent; the older nearest-example detector is the fallback
+when no trained file exists. No extra language model.
 """
 import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import numpy as np
-
-from .generation import Answer, sources_from
-from .intents import EXAMPLES_V2, IntentClassifier, IntentDetector
+from .intents import IntentClassifier, IntentDetector
 from .rag.embed import Embedder
 from .rag.search import Retriever
 from . import profile as profile_tool
@@ -33,8 +31,6 @@ from .tools import suitability as suit_tool
 from .tools import weather as weather_tool
 from .topic_gate import TopicGate
 
-INTENT_EXAMPLES = EXAMPLES_V2  # kept for the notebooks; the examples live in pingfarm/intents.py
-
 CROP_WORDS = {
     "tomato": ["tomato", "टमाटर", "టమాటా", "టమోటా"],
     "potato": ["potato", "आलू", "బంగాళదుంప", "ఆలు"],
@@ -45,7 +41,9 @@ ABSTAIN_TEXT = ("I am not sure about this one, and I do not want to guess. Pleas
 SCOPE_TEXT = ("I can help with tomato and potato: disease advice (send a leaf photo or describe the problem), whether it is a good day "
               "to spray, market prices near you, and the weather outlook for your crop. For anything else, please ask your local "
               "agriculture officer or Krishi Vigyan Kendra.")
-ASK_LOCATION ="Please share your location (WhatsApp: attach, then Location) so I can check the weather."
+ASK_LOCATION = ("Please tell me where your farm is: your village or town and state, for example \"Nashik, Maharashtra\". (Or share a location pin if your app has one.) Then I can check the weather.")
+PLACE_NOT_FOUND = ("I could not find that place. Please try the nearest bigger town with the state, for example "
+                   "\"Nashik, Maharashtra\".")
 ASK_BETTER_PHOTO = ("I could not tell clearly from this photo. Please send a close, well-lit photo of one affected "
                     "leaf (top side, and underside if possible).")
 
@@ -83,13 +81,14 @@ def detect_crop(text: str) -> str | None:
 class Agent:
     def __init__(self, retriever: Retriever, answerer, embedder: Embedder, state: State,
                  classifier=None, abstain_threshold: float | None = None,
-                 weather_fn=weather_tool.fetch_forecast, price_fn=price_tool.fetch_prices,
+                 weather_fn=weather_tool.fetch_forecast, price_fn=price_tool.fetch_prices, geocode_fn=markets_tool.geocode,
                  calibration_path: Path | None = None, rerank: bool = False, use_gate: bool = True,
                  balance_languages: bool = True):
         self.retriever, self.answerer, self.state = retriever, answerer, state
         self.classifier, self.rerank = classifier, rerank
         self.balance_languages = balance_languages  # English pages compete for Hindi/Telugu questions (D37)
-        self.weather_fn, self.price_fn = weather_fn, price_fn
+        self.weather_fn, self.price_fn, self.geocode_fn = weather_fn, price_fn, geocode_fn
+        self.awaiting_place: set[str] = set()  # users we just asked 'where is your farm?'
         self.embedder = embedder
         self.abstain_threshold = abstain_threshold if abstain_threshold is not None else _load_threshold(calibration_path)
         self.intents = IntentDetector(embedder)                      # nearest-centroid (fallback)
@@ -159,6 +158,20 @@ class Agent:
         if not text:
             return Reply("Please send a question or a photo of the leaf.", trace=["empty"])
 
+        # ---- a place typed as words ("I live in Nashik, Maharashtra"): same effect as sharing a location pin
+        place = profile_tool.parse_place(text, awaiting=user_id in self.awaiting_place)
+        if place:
+            self.awaiting_place.discard(user_id)
+            pos = self.geocode_fn(place[0], place[1], self.state)
+            if pos is None:
+                self.awaiting_place.add(user_id)
+                return Reply(PLACE_NOT_FOUND, trace=[f"place not found: {place[0]}"])
+            self.state.update_user(user_id, lat=pos[0], lon=pos[1], state=None, district=None)
+            shown = place[0] + (f", {place[1]}" if place[1] else "")
+            return Reply(f"Thank you, I set your location to {shown}. If that is the wrong place, tell me again with the "
+                         "state. You can now ask if it is a good day to spray, or ask for the weather outlook for your crop.",
+                         trace=[f"saved place: {shown}"])
+
         # ---- things the farmer tells us about themselves: soil, planting date, alert preference
         notes = []
         soil = profile_tool.parse_soil(text)
@@ -172,7 +185,7 @@ class Agent:
         alerts_on = profile_tool.parse_alert_command(text)
         if alerts_on is not None:
             if alerts_on and (user.lat is None or not crop):
-                return Reply("To send alerts I need your location (share a pin) and your crop (tomato or potato). "
+                return Reply("To send alerts I need your location (tell me your village or town and state) and your crop (tomato or potato). "
                              "Then say 'alerts on' again.", trace=["alerts need location and crop"])
             self.state.update_user(user_id, alerts=alerts_on)
             msg = ("Alerts are ON. I will message you only when the forecast is high-risk for your crop, at most once a day. "
@@ -194,6 +207,7 @@ class Agent:
         # ---- spray timing: weather tool
         if intent == "spray_timing":
             if user.lat is None:
+                self.awaiting_place.add(user_id)
                 return Reply(ASK_LOCATION, trace=trace)
             try:
                 advice = weather_tool.spray_advice(self.weather_fn(user.lat, user.lon))
@@ -206,6 +220,7 @@ class Agent:
         # ---- outlook: weather-based disease risk, soil and season fit, which crop suits the weather
         if intent == "outlook":
             if user.lat is None:
+                self.awaiting_place.add(user_id)
                 return Reply(ASK_LOCATION, trace=trace)
             try:
                 forecast = self.weather_fn(user.lat, user.lon)

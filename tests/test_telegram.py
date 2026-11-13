@@ -66,3 +66,43 @@ def test_polling_hands_each_message_over_advances_the_offset_and_survives_errors
     poll_forever(None, Fake(), stop, lambda app, msg, client: seen.append(msg.text))
     assert seen == ["one", "two"]
     assert calls[0] is None and calls[-1] == 12  # after update 11 it asks for 12 onwards
+
+
+def test_format_reply_splits_steps_drops_citation_numbers_and_lists_sources():
+    from pingfarm.telegram_channel import format_reply
+
+    raw = "Control steps: 1. Use clean seed [2]. 2. Remove weeds [1, 3]. 3. Spray 200 ml/ac [2]."
+    out = format_reply(raw, [{"title": "TNAU page", "url": "https://x.example/a"}, {"title": "B", "url": ""},
+                             {"title": "third is cut", "url": "https://x.example/c"}])
+    assert "[" not in out.split("Sources:")[0]  # no citation numbers left in the answer
+    assert "\n2. Remove weeds" in out and "\n3. Spray 200 ml/ac" in out  # one step per line, dose untouched
+    assert out.endswith("- TNAU page\n  https://x.example/a\n- B")  # two sources only, link only when there is one
+    assert format_reply("A sentence with 2.5 kg per acre.", []) == "A sentence with 2.5 kg per acre."  # not a list
+
+
+def test_app_uses_the_channels_formatter_and_typing_indicator():
+    from pingfarm.agent import Reply
+    from pingfarm.app import process_message
+    from pingfarm.whatsapp import Incoming
+
+    events = []
+
+    class FakeState:
+        def first_time_seeing(self, _):
+            return True
+
+    class FakeAgent:
+        state = FakeState()
+
+        def handle(self, sender, text=None, **_):
+            events.append("handled")
+            return Reply("Do this [1].", [{"title": "Src", "url": "https://u.example"}])
+
+    class App:
+        class state:  # noqa: N801
+            get_agent = staticmethod(lambda: FakeAgent())
+            wa = None
+
+    client = TelegramClient(token="x", dry_run=True)
+    process_message(App, Incoming(msg_id="tg:1", sender="9", kind="text", text="hi"), client)
+    assert client.sent == [("9", "Do this.\n\nSources:\n- Src\n  https://u.example")]

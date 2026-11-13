@@ -5,12 +5,12 @@ import os
 POLICY = """
 <h1>PingFarm privacy policy</h1>
 <p>PingFarm is a free farm advisory assistant for tomato and potato. A farmer sends a question, a leaf photo or a
-location on WhatsApp and gets advice taken from public agriculture documents, with the source shown.
+place name or location in a chat app (WhatsApp or Telegram) and gets advice taken from public agriculture documents, with the source shown.
 It is a learning project and not a commercial service.</p>
 
 <h2>What we collect</h2>
 <ul>
-  <li>Your WhatsApp number and the messages you send to PingFarm (questions, leaf photos, a location pin).</li>
+  <li>Your chat account number or ID (WhatsApp number or Telegram ID) and the messages you send to PingFarm (questions, leaf photos, a place name or location pin).</li>
   <li>Things you choose to tell the assistant: your crop, soil type, planting date, and whether you want weather alerts.</li>
 </ul>
 
@@ -19,7 +19,7 @@ It is a learning project and not a commercial service.</p>
 We do not sell your data, share it for advertising, or use it to identify you in any other way.</p>
 
 <h2>Who else sees it</h2>
-<p>WhatsApp (Meta) carries the messages. To write a reply, the text of your question and the matching passages from
+<p>The chat app you use (WhatsApp by Meta, or Telegram) carries the messages. To write a reply, the text of your question and the matching passages from
 public documents may be sent to a language-model service (Google Gemini). Weather forecasts are fetched for a
 location you share. Leaf photos are analysed on our own server.</p>
 

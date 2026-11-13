@@ -79,3 +79,27 @@ def crop_stage(crop: str, planted_on: str | None, today: date | None = None) -> 
         if days <= limit:
             return f"{name} (about {days} days after planting)"
     return None
+
+
+# ---- location typed as text ("I live in Nashik, Maharashtra"): works on every channel, no location pin needed
+_PLACE_PHRASE = re.compile(
+    r"\b(?:i\s+live\s+in|i\s+stay\s+in|i\s+am\s+from|i'?m\s+from|my\s+(?:village|town|city|place|location|area|farm)\s+is(?:\s+in)?|"
+    r"(?:village|town|city|location|place)\s*[:\-])\s*([A-Za-z][A-Za-z .'\-]*(?:,\s*[A-Za-z][A-Za-z .'\-]*)?)",
+    re.IGNORECASE,
+)
+
+
+def parse_place(text: str, awaiting: bool = False) -> tuple[str, str | None] | None:
+    """A place name from the message as (name, state or None), or None.
+
+    Explicit phrases always count. A short plain reply ("Nashik, Maharashtra") counts only when we have just asked
+    where the farmer is (`awaiting`), so ordinary questions are never mistaken for a place."""
+    m = _PLACE_PHRASE.search(text)
+    raw = m.group(1) if m else None
+    if raw is None and awaiting and "?" not in text and len(text.split()) <= 5 and re.fullmatch(r"[A-Za-z][A-Za-z .,'\-]*", text.strip()):
+        raw = text
+    if not raw:
+        return None
+    parts = [p.strip(" .") for p in raw.split(",")]
+    name = parts[0]
+    return (name, parts[1] if len(parts) > 1 and parts[1] else None) if name else None

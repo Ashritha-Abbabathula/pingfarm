@@ -10,7 +10,9 @@ Messages become the same Incoming object the other channels produce, so the agen
 """
 import logging
 import os
+import re
 import threading
+from contextlib import contextmanager
 
 import httpx
 
@@ -45,8 +47,27 @@ def parse_update(update: dict) -> list[Incoming]:
     return [inc] if inc.kind != "other" else []
 
 
+_CITE = re.compile(r"\s*\[\d+(?:\s*[,;]\s*\d+)*\]")        # [2] or [1, 3]: passage numbers mean nothing to a farmer
+_STEPS = re.compile(r"[ \t]+(?=\d{1,2}\.\s)")                  # " 2. Grow ..." -> start the step on its own line
+
+
+def format_reply(text: str, sources: list[dict], max_sources: int = 2) -> str:
+    """Make a reply easy to read in a chat bubble: one step per line, no stray citation numbers, then a short
+    list of sources (title and link). Plain text only: no Markdown to break on odd characters."""
+    body = _CITE.sub("", text).strip()
+    if len(re.findall(r"(?:^|\s)\d{1,2}\.\s", body)) >= 2:  # only split real numbered lists
+        body = _STEPS.sub("\n", body)
+    body = re.sub(r"[ \t]+\n", "\n", body)
+    body = re.sub(r"\n{3,}", "\n\n", body)
+    shown = [s for s in sources if s.get("title")][:max_sources]
+    if shown:
+        body += "\n\nSources:\n" + "\n".join(f"- {s['title']}" + (f"\n  {s['url']}" if s.get("url") else "") for s in shown)
+    return body
+
+
 class TelegramClient:
     """Same two methods the app uses on the other clients (send_text, download_media), plus get_updates."""
+    format_reply = staticmethod(format_reply)  # the app uses this when a channel provides it
 
     def __init__(self, token: str | None = None, dry_run: bool | None = None):
         self.token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -61,8 +82,30 @@ class TelegramClient:
         if self.dry_run:
             return
         for i in range(0, len(body), MAX_BODY) or [0]:
-            httpx.post(self._url("sendMessage"), json={"chat_id": to, "text": body[i:i + MAX_BODY]},
+            httpx.post(self._url("sendMessage"),
+                       json={"chat_id": to, "text": body[i:i + MAX_BODY], "disable_web_page_preview": True},  # no big link cards
                        timeout=20).raise_for_status()
+
+    @contextmanager
+    def typing_while(self, to: str):
+        """Show "typing..." in the chat for as long as the block runs (Telegram clears it after about 5 seconds)."""
+        stop = threading.Event()
+
+        def pulse():
+            while not stop.is_set():
+                try:
+                    if not self.dry_run:
+                        httpx.post(self._url("sendChatAction"), json={"chat_id": to, "action": "typing"}, timeout=10)
+                except Exception:
+                    pass  # a missed indicator is not worth failing the answer
+                stop.wait(4)
+
+        t = threading.Thread(target=pulse, daemon=True)
+        t.start()
+        try:
+            yield
+        finally:
+            stop.set()
 
     def download_media(self, file_id: str) -> bytes:
         info = httpx.get(self._url("getFile"), params={"file_id": file_id}, timeout=20).raise_for_status().json()

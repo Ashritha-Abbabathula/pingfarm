@@ -9,11 +9,14 @@ Endpoints
     POST /ask              JSON {user_id, text, lat, lon}  -> reply   (for testing)
     POST /ask/photo        multipart photo upload          -> reply
     GET  /webhook          Meta's verification handshake
-    POST /webhook          incoming WhatsApp messages
+    POST /webhook          incoming WhatsApp messages (Meta Cloud API)
+    POST /twilio           incoming WhatsApp messages (Twilio sandbox)
+    (Telegram needs no endpoint: a background thread polls Telegram for new messages)
 """
 import logging
 import os
 import threading
+from contextlib import nullcontext
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
@@ -183,6 +186,12 @@ def process_message(app: FastAPI, msg, channel=None) -> None:
     agent, wa = app.state.get_agent(), channel or app.state.wa  # the Meta client unless told otherwise
     if not agent.state.first_time_seeing(msg.msg_id):
         return  # a retry of a message we already handled
+    typing = getattr(wa, "typing_while", None)  # channels that can show "typing..." while we think
+    with typing(msg.sender) if typing else nullcontext():
+        _handle(agent, wa, msg)
+
+
+def _handle(agent, wa, msg) -> None:
     try:
         if msg.kind == "audio":
             wa.send_text(msg.sender, "Voice notes are coming soon. For now please type your question or send a photo.")
@@ -195,9 +204,13 @@ def process_message(app: FastAPI, msg, channel=None) -> None:
             reply = agent.handle(msg.sender, text=msg.text)
         else:
             return
-        body = reply.text
-        if reply.sources:
-            body += "\n\nSources: " + "; ".join(s["title"] for s in reply.sources[:2])
+        fmt = getattr(wa, "format_reply", None)  # a channel may lay the reply out its own way (Telegram does)
+        if fmt:
+            body = fmt(reply.text, reply.sources)
+        else:
+            body = reply.text
+            if reply.sources:
+                body += "\n\nSources: " + "; ".join(s["title"] for s in reply.sources[:2])
         wa.send_text(msg.sender, body)
     except Exception:  # never leave a farmer without any answer
         wa.send_text(msg.sender, "Sorry, something went wrong on my side. Please try again in a little while.")
