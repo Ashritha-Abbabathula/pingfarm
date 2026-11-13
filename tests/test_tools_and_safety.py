@@ -159,3 +159,15 @@ def test_privacy_page_is_public_and_shows_no_personal_contact_by_default(monkeyp
     assert page.status_code == 200 and "delete my data" in page.text and "@" not in page.text
     monkeypatch.setenv("PINGFARM_CONTACT_EMAIL", "me@example.org")
     assert "me@example.org" in client.get("/privacy").text
+
+
+def test_delivery_reports_are_parsed_without_phone_numbers():
+    from pingfarm.whatsapp import parse_statuses
+
+    payload = {"entry": [{"changes": [{"value": {"statuses": [
+        {"status": "delivered", "recipient_id": "919999999999"},
+        {"status": "failed", "recipient_id": "919999999999", "errors": [{"code": 131047, "title": "Re-engagement message"}]},
+    ]}}]}]}
+    assert parse_statuses(payload) == [("delivered", []), ("failed", [(131047, "Re-engagement message")])]
+    assert "9199" not in str(parse_statuses(payload))
+    assert parse_statuses({"entry": [{"changes": [{"value": {"messages": []}}]}]}) == []

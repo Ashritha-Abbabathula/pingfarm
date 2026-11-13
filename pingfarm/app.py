@@ -28,7 +28,7 @@ from .rag.documents import load_documents
 from .rag.embed import Embedder
 from .rag.search import Retriever
 from .state import State
-from .whatsapp import WhatsAppClient, parse_incoming, verify_signature
+from .whatsapp import WhatsAppClient, parse_incoming, parse_statuses, verify_signature
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -126,7 +126,11 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
         if not verify_signature(raw, request.headers.get("X-Hub-Signature-256"), os.environ.get("WHATSAPP_APP_SECRET")):
             raise HTTPException(403, "bad signature")
         # Answer Meta immediately (it retries if we are slow); do the real work in the background.
-        for msg in parse_incoming(await request.json()):
+        payload = await request.json()
+        log = logging.getLogger("uvicorn.error")  # the logger whose messages appear in the server's output
+        for status, errors in parse_statuses(payload):  # did WhatsApp really deliver what we sent?
+            log.warning("delivery report: %s %s", status, errors) if errors or status == "failed" else log.info("delivery report: %s", status)
+        for msg in parse_incoming(payload):
             background.add_task(process_message, app, msg)
         return {"status": "received"}
 

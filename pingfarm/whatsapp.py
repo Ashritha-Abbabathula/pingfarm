@@ -43,6 +43,18 @@ def verify_signature(raw_body: bytes, header: str | None, app_secret: str | None
     return hmac.compare_digest(expected, header.removeprefix("sha256="))
 
 
+def parse_statuses(payload: dict) -> list[tuple[str, list[tuple[int | None, str]]]]:
+    """Delivery reports Meta sends about messages WE sent: (status, [(error code, error title)]).
+    Phone numbers are deliberately left out so they never reach a log file."""
+    out = []
+    for entry in payload.get("entry", []):
+        for change in entry.get("changes", []):
+            for st in change.get("value", {}).get("statuses", []):
+                errors = [(e.get("code"), e.get("title") or e.get("message", "")) for e in st.get("errors", [])]
+                out.append((st.get("status", "?"), errors))
+    return out
+
+
 def parse_incoming(payload: dict) -> list[Incoming]:
     """Pull the user messages out of Meta's nested webhook JSON."""
     out = []
