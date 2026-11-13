@@ -116,6 +116,20 @@ Meta's setup screens show green ticks even when the bot is not yet receiving any
 Then message the test number from a phone that is on the recipient list. The first reply after the app starts is slow
 (about 3 minutes on a laptop CPU) because the models load on the first message.
 
+## The access token (read this before you wonder why replies stopped)
+
+The "temporary access token" from Step 1 Try it out lasts only hours. When it expires the bot still receives and writes
+answers, but Meta refuses to deliver them: the app log shows `401 Unauthorized` from `graph.facebook.com/.../messages`.
+
+Use a **system user token** instead (it lasted 60 days when we made it on 2026-11-13):
+1. business.facebook.com, Business settings, Users, System users: the user `pingfarm-bot` (role Admin) already exists.
+2. Give it the PingFarm app (Manage app) and the WhatsApp account (full control) under Assign assets.
+3. Generate token: choose PingFarm, the longest expiry offered, and tick `whatsapp_business_messaging` and
+   `whatsapp_business_management`. Copy it into `.env` as `WHATSAPP_TOKEN=` and restart the app.
+
+Check it any time: `GET https://graph.facebook.com/v25.0/debug_token?input_token=<token>&access_token=<app id>|<app secret>`
+shows `is_valid` and `expires_at`. Renew about a week before it runs out.
+
 ## Troubleshooting
 - **Webhook verification fails:** the app is not running, the tunnel address changed (free tunnels change on restart), or the verify token differs by one character.
 - **No reply on WhatsApp:** check you added your phone as a recipient, the token has not expired (24 h), and the terminal running `uvicorn` for errors.
