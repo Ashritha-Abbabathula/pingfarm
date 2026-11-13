@@ -17,6 +17,8 @@ Kept on purpose. A project that only lists successes hides what was learned. Dat
 
 **Where it ended up:** the same agent now sits behind four doors: the web chat page, Meta's WhatsApp webhook, Twilio's `/twilio` webhook (both built, tested and left in place for when a verified business or the legacy console is available), and a Telegram bot (long polling, needs no public address, no verification and no payment). See D42 and D43 in `DECISIONS.md`.
 
+**Result (2026-11-13, evening):** the owner messaged the Telegram bot from a phone and got the bot's answer. First time a real phone received a PingFarm reply; the app log showed no errors. Time from the BotFather token to the first reply: a few minutes.
+
 **What a real pilot needs:** a verified business with a business phone on Meta's WhatsApp Cloud API, or a paid Twilio WhatsApp sender. Neither is a code problem.
 
 ## Engineering faults found by testing the real thing
