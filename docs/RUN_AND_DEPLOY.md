@@ -114,8 +114,26 @@ Meta only delivers a bot's replies once the business behind the number is verifi
    **When a message comes in**, method **POST**, and Save.
 5. Message the sandbox number a question. The bot answers by Twilio's API, so slow answers never time out.
 
+**Known problem (2026-11-13):** the webhook box ("When a message comes in", under Sandbox settings) exists only in Twilio's
+*legacy* console. Some accounts are redirected to the new console every time, and the new console's "Try out WhatsApp"
+page has no webhook field, so step 4 cannot be done. Until it is set, Twilio answers every message with its stock
+"Standard auto-reply" and the bot is never called. Also, the sandbox number can differ from the documented
++1 415 523 8886 (ours was +1 737 221 2163): put the number your page shows in `TWILIO_WHATSAPP_FROM`.
+See `WHAT_WENT_WRONG.md`. If you hit this, use Telegram (section 3c).
+
 Without `TWILIO_AUTH_TOKEN` every request to `/twilio` is rejected (nobody can post fake messages). If the signature
 check fails behind a proxy, set `TWILIO_WEBHOOK_URL` to the exact address Twilio calls.
+
+## 3c. Telegram bot (free, no verification, no public address)
+
+1. In Telegram, open a chat with **@BotFather**, send `/newbot`, choose a name and a username ending in `bot`.
+2. BotFather replies with a token like `123456:ABC...`. It is a secret: put it in `.env` as `TELEGRAM_BOT_TOKEN=` (never in chat).
+3. Restart the app. `/health` should show `"telegram_on": true`. The bot asks Telegram for new messages by itself
+   (long polling), so you need no tunnel and no webhook setting.
+4. In Telegram open your bot (the link BotFather gave) and press **Start**, then ask a question. Photos and location pins work too.
+
+Set `PINGFARM_TELEGRAM_POLL=0` to switch polling off. Anyone who finds the bot's username can message it; revoke the token
+in BotFather (`/revoke`) if that is a problem.
 
 ## Meta gotchas found on the first live run (2026-11-13)
 

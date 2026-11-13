@@ -11,7 +11,7 @@ Scope: **tomato and potato** (diseases, pests, cultivation); questions in **Engl
 > Gemini passed a one-request key check on 2026-11-02, but full replies written by it have not been reviewed yet.
 > **Not done:** live tests of the Claude answerer, live WhatsApp and price-API connections (need your credentials),
 > speech-to-text, and the farmer pilot.
-> See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md).
+> See [DECISIONS.md](DECISIONS.md) and [docs/RUN_AND_DEPLOY.md](docs/RUN_AND_DEPLOY.md). What failed along the way, and why: [docs/WHAT_WENT_WRONG.md](docs/WHAT_WENT_WRONG.md).
 
 ```
  text / photo / location -> agent -> intent: advice | spray timing | price

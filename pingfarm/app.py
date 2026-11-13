@@ -28,6 +28,7 @@ from .rag.documents import load_documents
 from .rag.embed import Embedder
 from .rag.search import Retriever
 from .state import State
+from .telegram_channel import TelegramClient, poll_forever
 from .twilio_channel import TwilioClient, parse_twilio, verify_twilio_signature
 from .whatsapp import WhatsAppClient, parse_incoming, parse_statuses, verify_signature
 
@@ -66,11 +67,14 @@ class AskBody(BaseModel):
     lon: float | None = None
 
 
-def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None, twilio: TwilioClient | None = None) -> FastAPI:
+def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None, twilio: TwilioClient | None = None,
+               telegram: TelegramClient | None = None) -> FastAPI:
     app = FastAPI(title="PingFarm")
     app.state.agent = agent
     app.state.wa = wa or WhatsAppClient()
     app.state.twilio = twilio or TwilioClient()
+    app.state.telegram = telegram or TelegramClient()
+    app.state.telegram_stop = threading.Event()
 
     build_lock = threading.Lock()
 
@@ -91,6 +95,16 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None, twi
         if app.state.agent is None and os.environ.get("PINGFARM_PRELOAD", "1") != "0":
             threading.Thread(target=get_agent, name="preload-agent", daemon=True).start()
             logging.getLogger(__name__).info("loading the models in the background")
+        # Telegram: ask for new messages in the background (no public address needed). Only when a bot token is set.
+        tg = app.state.telegram
+        if not tg.dry_run and os.environ.get("PINGFARM_TELEGRAM_POLL", "1") != "0":
+            threading.Thread(target=poll_forever, args=(app, tg, app.state.telegram_stop, process_message),
+                             name="telegram-poll", daemon=True).start()
+            logging.getLogger(__name__).info("telegram polling started")
+
+    @app.on_event("shutdown")
+    def stop_telegram():
+        app.state.telegram_stop.set()
 
     @app.get("/health")
     def health():
@@ -99,7 +113,8 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None, twi
                 "photo_diagnosis": bool(a and a.classifier),
                 "llm": (getattr(a.answerer, "label", None) or type(a.answerer).__name__) if a else None,
                 "whatsapp_dry_run": app.state.wa.dry_run,
-                "twilio_dry_run": app.state.twilio.dry_run}
+                "twilio_dry_run": app.state.twilio.dry_run,
+                "telegram_on": not app.state.telegram.dry_run}
 
     @app.post("/ask")
     def ask(body: AskBody):
