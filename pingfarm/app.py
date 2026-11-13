@@ -11,7 +11,9 @@ Endpoints
     GET  /webhook          Meta's verification handshake
     POST /webhook          incoming WhatsApp messages
 """
+import logging
 import os
+import threading
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
@@ -68,10 +70,25 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
     app.state.agent = agent
     app.state.wa = wa or WhatsAppClient()
 
+    build_lock = threading.Lock()
+
     def get_agent() -> Agent:
-        if app.state.agent is None:  # built on first use so importing the module stays fast
-            app.state.agent = build_agent(classifier=_load_classifier())
+        # Loading the models takes about a minute. The lock makes two requests that arrive together share ONE load
+        # instead of each loading their own copy (which made every answer take minutes).
+        with build_lock:
+            if app.state.agent is None:
+                app.state.agent = build_agent(classifier=_load_classifier())
         return app.state.agent
+
+    app.state.get_agent = get_agent
+
+    @app.on_event("startup")
+    def preload_agent():
+        # Load the models now, in the background, so the first farmer does not wait. Off for tests (agent given) and
+        # with PINGFARM_PRELOAD=0.
+        if app.state.agent is None and os.environ.get("PINGFARM_PRELOAD", "1") != "0":
+            threading.Thread(target=get_agent, name="preload-agent", daemon=True).start()
+            logging.getLogger(__name__).info("loading the models in the background")
 
     @app.get("/health")
     def health():
@@ -125,8 +142,7 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
 
 
 def process_message(app: FastAPI, msg) -> None:
-    agent, wa = app.state.agent or build_agent(classifier=_load_classifier()), app.state.wa
-    app.state.agent = agent
+    agent, wa = app.state.get_agent(), app.state.wa
     if not agent.state.first_time_seeing(msg.msg_id):
         return  # a retry of a message we already handled
     try:
