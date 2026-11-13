@@ -35,6 +35,7 @@ Kept on purpose. A project that only lists successes hides what was learned. Dat
 | Price lookups (data.gov.in) time out even with a valid key | Their server is slow or throttling | Unconfirmed; the bot waits 20 s then answers without prices |
 | Free tunnel address changes at every restart | Quick tunnels are temporary | Repoint the webhook after a restart, or use Telegram polling, which has no address |
 | Temperature scaling made calibration worse (0.098 to 0.130) | Over-fitting on a small set | Rejected and recorded (D-table) |
+| Bot told Telegram users to "attach, then Location" (a WhatsApp habit) and printed `[2]` markers that matched nothing | The shared agent carried WhatsApp wording, and citation numbers count retrieved passages while the source list is de-duplicated by document | Place names can be typed (D44); Telegram replies are formatted in the channel layer |
 
 ## Mistakes in how I worked (kept honest)
 
