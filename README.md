@@ -85,6 +85,7 @@ slightly lower on small hand-written romanised Hindi/Telugu sets (83% to 79%).
 | Learned topic gate and trained intent router | `pingfarm/topic_gate.py`, `pingfarm/intents.py`, `scripts/train_topic_gate.py`, `scripts/train_intents.py` |
 | Farmer profile (soil, planting date, alerts, delete data) | `pingfarm/profile.py` |
 | Weather risk outlook, soil/weather fit, nearby markets | `pingfarm/tools/risk.py`, `suitability.py`, `markets.py` |
+| WhatsApp through Twilio's sandbox (no business verification) | `pingfarm/twilio_channel.py`, `POST /twilio` |
 | Opt-in alerts (24-hour WhatsApp rule) | `pingfarm/alerts.py`, `scripts/run_alerts.py` |
 | Real farmer questions (KCC open data) | `scripts/fetch_kcc_sample.py`, `scripts/build_real_questions.py` |
 | SQLite state, message de-duplication | `pingfarm/state.py` |
@@ -103,7 +104,7 @@ python -m venv <somewhere>/pingfarm-venv   # then activate it
 pip install -r requirements.txt
 python scripts/fetch_corpus.py              # downloads the source documents
 python scripts/build_starter_questions.py   # writes data/eval/questions.jsonl
-python -m pytest -q tests                   # 71 tests (about 1 minute)
+python -m pytest -q tests                   # 79 tests (about 1 minute)
 python -m pingfarm.evalkit.run_eval         # every retrieval experiment (--quick skips the reranker)
 python scripts/prepare_classifier_data.py   # downloads and prepares leaf photos (about 1 GB, slow)
 python scripts/train_classifier.py          # trains both classifier experiments (~35 min on CPU)

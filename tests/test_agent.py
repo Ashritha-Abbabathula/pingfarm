@@ -117,6 +117,33 @@ def test_webhook_dedupes_and_replies(parts, monkeypatch):
     assert len(wa.sent) == 1
 
 
+def test_twilio_webhook_checks_signature_dedupes_and_replies(parts, monkeypatch):
+    import base64
+    import hashlib
+    import hmac
+
+    from fastapi.testclient import TestClient
+
+    from pingfarm.app import create_app
+    from pingfarm.twilio_channel import TwilioClient
+    from pingfarm.whatsapp import WhatsAppClient
+
+    monkeypatch.setenv("TWILIO_AUTH_TOKEN", "tok")
+    tw = TwilioClient(dry_run=True)
+    client = TestClient(create_app(make_agent(parts), WhatsAppClient(), tw))
+    form = {"From": "whatsapp:+919999999999", "MessageSid": "SMabc", "NumMedia": "0",
+            "Body": "How do I control leaf curl virus in tomato?"}
+    url = "http://testserver/twilio"  # what the test client calls; Twilio signs the public address it called
+    sig = base64.b64encode(hmac.new(b"tok", (url + "".join(k + form[k] for k in sorted(form))).encode(), hashlib.sha1).digest()).decode()
+
+    assert client.post("/twilio", data=form, headers={"X-Twilio-Signature": "wrong"}).status_code == 403
+    assert client.post("/twilio", data=form).status_code == 403
+    for _ in range(3):  # Twilio can retry the same message
+        r = client.post("/twilio", data=form, headers={"X-Twilio-Signature": sig})
+        assert r.status_code == 200 and "<Response" in r.text
+    assert len(tw.sent) == 1 and tw.sent[0][0] == "+919999999999"
+
+
 # ---------------------------------------------------------------- profile, outlook, alerts, deletion
 def _risky():
     from pingfarm.tools.weather import DayForecast

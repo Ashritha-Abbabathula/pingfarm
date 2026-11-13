@@ -17,7 +17,7 @@ import threading
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from pydantic import BaseModel
 
 from .agent import Agent
@@ -28,6 +28,7 @@ from .rag.documents import load_documents
 from .rag.embed import Embedder
 from .rag.search import Retriever
 from .state import State
+from .twilio_channel import TwilioClient, parse_twilio, verify_twilio_signature
 from .whatsapp import WhatsAppClient, parse_incoming, parse_statuses, verify_signature
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,10 +66,11 @@ class AskBody(BaseModel):
     lon: float | None = None
 
 
-def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> FastAPI:
+def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None, twilio: TwilioClient | None = None) -> FastAPI:
     app = FastAPI(title="PingFarm")
     app.state.agent = agent
     app.state.wa = wa or WhatsAppClient()
+    app.state.twilio = twilio or TwilioClient()
 
     build_lock = threading.Lock()
 
@@ -96,7 +98,8 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
         return {"ok": True, "agent_loaded": a is not None,
                 "photo_diagnosis": bool(a and a.classifier),
                 "llm": (getattr(a.answerer, "label", None) or type(a.answerer).__name__) if a else None,
-                "whatsapp_dry_run": app.state.wa.dry_run}
+                "whatsapp_dry_run": app.state.wa.dry_run,
+                "twilio_dry_run": app.state.twilio.dry_run}
 
     @app.post("/ask")
     def ask(body: AskBody):
@@ -134,6 +137,22 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
             background.add_task(process_message, app, msg)
         return {"status": "received"}
 
+    @app.post("/twilio")
+    async def twilio_webhook(request: Request, background: BackgroundTasks):
+        """Twilio's WhatsApp sandbox posts a web form here. Answer at once; the reply goes out by Twilio's API."""
+        form = {k: str(v) for k, v in (await request.form()).items()}
+        proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+        host = request.headers.get("x-forwarded-host") or request.headers.get("host", request.url.netloc)
+        urls = {f"{proto}://{host}{request.url.path}", str(request.url)}  # Twilio signs the public address it called
+        if os.environ.get("TWILIO_WEBHOOK_URL"):
+            urls.add(os.environ["TWILIO_WEBHOOK_URL"])
+        signature = request.headers.get("X-Twilio-Signature")
+        if not any(verify_twilio_signature(u, form, signature, os.environ.get("TWILIO_AUTH_TOKEN")) for u in urls):
+            raise HTTPException(403, "bad signature")
+        for msg in parse_twilio(form):
+            background.add_task(process_message, app, msg, app.state.twilio)
+        return Response(content="<Response></Response>", media_type="application/xml")
+
     @app.get("/privacy", response_class=HTMLResponse)
     def privacy():
         return privacy_html()
@@ -145,8 +164,8 @@ def create_app(agent: Agent | None = None, wa: WhatsAppClient | None = None) -> 
     return app
 
 
-def process_message(app: FastAPI, msg) -> None:
-    agent, wa = app.state.get_agent(), app.state.wa
+def process_message(app: FastAPI, msg, channel=None) -> None:
+    agent, wa = app.state.get_agent(), channel or app.state.wa  # the Meta client unless told otherwise
     if not agent.state.first_time_seeing(msg.msg_id):
         return  # a retry of a message we already handled
     try:

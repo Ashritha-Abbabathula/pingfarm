@@ -100,6 +100,23 @@ uvicorn pingfarm.app:app --reload        # chat page at http://127.0.0.1:8000
 `http://127.0.0.1:8000/health` shows which parts are switched on (`llm`, `photo_diagnosis`, `whatsapp_dry_run`).
 `whatsapp_dry_run: false` means real sending is on.
 
+## 3b. WhatsApp through Twilio's sandbox (no business verification)
+
+Meta only delivers a bot's replies once the business behind the number is verified (its delivery report says
+`131031 Business Account locked`), and its business form has no India in the country list. Twilio's sandbox has no such rule.
+
+1. Make a free account at https://www.twilio.com (verify your email and your phone).
+2. Console, **Messaging**, **Try it out**, **Send a WhatsApp message**. It shows the sandbox number and a join code.
+   From your phone send `join <your-code>` to that number on WhatsApp. (Every phone that wants to chat does this once; the
+   join lasts about 3 days.)
+3. In `.env` set `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` (Console, Account info). Restart the app.
+4. Make your laptop reachable (section 3C), then in the sandbox settings put `https://<your-address>/twilio` under
+   **When a message comes in**, method **POST**, and Save.
+5. Message the sandbox number a question. The bot answers by Twilio's API, so slow answers never time out.
+
+Without `TWILIO_AUTH_TOKEN` every request to `/twilio` is rejected (nobody can post fake messages). If the signature
+check fails behind a proxy, set `TWILIO_WEBHOOK_URL` to the exact address Twilio calls.
+
 ## Meta gotchas found on the first live run (2026-11-13)
 
 Meta's setup screens show green ticks even when the bot is not yet receiving anything. Three things were missing:
